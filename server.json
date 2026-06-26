@@ -1,0 +1,13 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.lightbringer/connector",
+  "description": "Draft, validate, and submit inventions and manage patent reviews on Lightbringer.",
+  "version": "1.0.0",
+  "websiteUrl": "https://lightbringer.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.lightbringer.com/mcp"
+    }
+  ]
+}
