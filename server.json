@@ -1,9 +1,28 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.lightbringer/connector",
-  "description": "Draft, validate, and submit inventions and manage patent reviews on Lightbringer.",
-  "version": "1.0.0",
+  "description": "Capture, analyze, validate, and submit inventions, and collaborate on patent reviews.",
+  "title": "Lightbringer",
+  "repository": {
+    "url": "https://github.com/lightbringer-patents/mcp-connector",
+    "source": "github"
+  },
+  "version": "1.0.4",
   "websiteUrl": "https://lightbringer.com",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/lightbringer-patents/mcp-connector/main/logo-square-dark.png",
+      "mimeType": "image/png",
+      "sizes": ["1024x1024"],
+      "theme": "dark"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/lightbringer-patents/mcp-connector/main/logo-square-light.png",
+      "mimeType": "image/png",
+      "sizes": ["1024x1024"],
+      "theme": "light"
+    }
+  ],
   "remotes": [
     {
       "type": "streamable-http",
