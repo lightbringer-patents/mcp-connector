@@ -21,7 +21,7 @@ ChatGPT · Claude · Cursor · Claude Code · and other MCP-compatible IDEs and 
 |---|---|
 | **Endpoint** | `https://mcp.lightbringer.com/mcp` |
 | **Transport** | Streamable HTTP |
-| **Auth** | OAuth 2.0 (Authorization Code + PKCE), with Dynamic Client Registration |
+| **Auth** | OAuth 2.1 (Authorization Code + PKCE, S256), with Dynamic Client Registration |
 | **Scopes** | `mcp:read`, `mcp:write` |
 
 Setup is a simple authorization flow that enables secure access to invention records within your organization's Lightbringer environment.
@@ -41,7 +41,7 @@ Setup is a simple authorization flow that enables secure access to invention rec
 
 ## Tools
 
-17 tools — 11 read-only, 6 write:
+19 tools — 10 read-only, 9 write. The types below match the `readOnlyHint` annotations advertised in the server's live `tools/list`:
 
 | Tool | Type |
 |---|---|
@@ -52,16 +52,23 @@ Setup is a simple authorization flow that enables secure access to invention rec
 | `get_invention` | read |
 | `get_invention_template` | read |
 | `validate_invention` | read |
-| `get_invention_feedback` | read |
 | `list_reviews` | read |
 | `get_review` | read |
 | `check_task_status` | read |
 | `create_invention` | write |
 | `update_invention` | write |
 | `submit_invention` | write |
+| `get_invention_feedback` | write¹ |
 | `respond_to_review` | write |
 | `add_comment` | write |
 | `reply_to_comment` | write |
+| `add_discussion_comment` | write |
+| `send_developer_feedback` | write² |
+
+¹ Available under read consent; annotated non-read-only because it dispatches background patent analysis. It never edits content.
+² Sends feedback about the tools themselves to the Lightbringer engineering team.
+
+Only `update_invention` and `submit_invention` carry `destructiveHint: true`; every tool is `openWorldHint: false`.
 
 ## Registry
 
