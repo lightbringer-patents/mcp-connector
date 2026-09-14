@@ -41,7 +41,7 @@ Setup is a simple authorization flow that enables secure access to invention rec
 
 ## Tools
 
-19 tools — 10 read-only, 9 write. The types below match the `readOnlyHint` annotations advertised in the server's live `tools/list`:
+The full production catalog in Altair 4.6.0 contains 19 tools — 10 annotated read-only and 9 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope: actual availability depends on consented scopes and server configuration. `send_developer_feedback` is optional; without its configured delivery channel, the catalog contains 18 tools.
 
 | Tool | Type |
 |---|---|
@@ -66,9 +66,11 @@ Setup is a simple authorization flow that enables secure access to invention rec
 | `send_developer_feedback` | write² |
 
 ¹ Available under read consent; annotated non-read-only because it dispatches background patent analysis. It never edits content.
-² Sends feedback about the tools themselves to the Lightbringer engineering team.
+² Available under read consent when its delivery channel is configured. Sends feedback about the tools themselves to the Lightbringer engineering team through Slack.
 
-Only `update_invention` and `submit_invention` carry `destructiveHint: true`; every tool is `openWorldHint: false`.
+The following tools carry `destructiveHint: true`: `update_invention`, `submit_invention`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. All of those except `update_invention` also carry `openWorldHint: true`, reflecting outgoing notifications or feedback delivery. Other tools advertise both hints as false.
+
+These annotations describe tool behavior; they do not grant access. The consented scopes and the user's existing permissions determine what the connection can do.
 
 ## Registry
 
