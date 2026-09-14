@@ -29,7 +29,7 @@ The renamed tools have no compatibility aliases. Update installed skills, saved 
 
 ## Verification before release
 
-- Discover the deployed tools and annotations with both read and read/write consent. Expect 18 tools with developer feedback configured, or 17 without it, for the full production catalog. Consent can reduce the visible set further.
+- Discover the deployed tools and annotations with both read and read/write consent. Expect 20 tools with developer feedback configured, or 19 without it, for the full production catalog. Consent can reduce the visible set further.
 - Verify registration succeeds with a saved ID/link and warnings when appropriate; invalid payloads do not create records. Do not call registration to perform a validation-only request.
 - Start automated feedback and follow the same task ID through success, partial success and failure. Verify that successful findings survive sibling failures. Both tools must return readable `title`/`description` findings and public analysis names, including cached results; deploy Phaenix rich-text rendering before Altair normalization. Unsupported results must produce `findings_error`, never raw editor JSON or an empty-success fallback.
 - Request preparation for an explicitly selected innovation. Check both `requested` and `already_requested`; do not interpret either as completed filing or poll the innovation ID as a task.
@@ -37,3 +37,5 @@ The renamed tools have no compatibility aliases. Update installed skills, saved 
 - Compare registry and plugin endpoint, service positioning, tool names and scope guidance with the deployed server. Read-only hints and consent scopes describe different properties.
 
 These are release acceptance checks, not claims that deployment, host approval or registry publication has occurred.
+
+Task retention and recovery: deploy the task `createdAt` index, expiry checks, user-scrub cleanup, task listing/deletion routes, deletion token scope and daily authenticated cleanup job before Altair. Verify `list_tasks` recovery and `delete_task` with write consent; ownership and current subject access apply to listing/reads, while an owner may delete their own history after losing subject access. Reads expire at 30 days from creation; the capped daily sweep physically deletes expired parents and child results. Aurora execution records retain their existing separate lifecycle.

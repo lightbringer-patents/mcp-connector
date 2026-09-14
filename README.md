@@ -81,6 +81,8 @@ The upcoming full production catalog contains 18 tools: 9 annotated read-only an
 | `list_reviews` | read | Locate report and patent-draft reviews. |
 | `get_review` | read | Read review documents, comments and discussion. |
 | `get_task_status` | read | Follow an automated feedback task using its `task_id`. |
+| `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
+| `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
@@ -95,7 +97,7 @@ The upcoming full production catalog contains 18 tools: 9 annotated read-only an
 
 ² Available under read consent when its delivery channel is configured. Sends tool feedback to the Lightbringer engineering team through Slack.
 
-The following tools carry `destructiveHint: true`: `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. All of those except `update_innovation` also carry `openWorldHint: true`, reflecting outgoing notifications or feedback delivery. Other tools advertise both hints as false. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. All of those except `delete_task` and `update_innovation` also carry `openWorldHint: true`, reflecting outgoing notifications or feedback delivery. Other tools advertise both hints as false. Annotations describe behavior; they do not grant access.
 
 ## Registration, automated tasks and professional requests
 
@@ -106,6 +108,8 @@ The following tools carry `destructiveHint: true`: `update_innovation`, `request
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
 
 The four user-invoked MCP prompts are `draft-invention-disclosure`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the three plugin skills provide fuller workflow guidance.
+
+Tasks and findings expire 30 days after creation; reading does not consume them or extend retention. Use `list_tasks`, optionally filtered by `invention_id`, to recover a lost task ID in the connected organisation. Follow `next_cursor` even if access filtering returns an empty page; listing reports recorded status without polling. `delete_task` permanently removes the user’s task and findings when requested, in any execution state, with write consent. Deletion does not cancel the analysis, delete the innovation or withdraw a service request.
 
 ## Registry and related repositories
 
