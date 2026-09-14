@@ -6,7 +6,7 @@ The immediate annotation correction is independent: [connector PR #2](https://gi
 
 ## Dependencies and order
 
-1. Deploy [Phaenix PR #4124](https://github.com/phaenixorg/phaenix/pull/4124), including registration validation, the `InnovationFeedbackTask`/`InnovationFeedbackJob` schema and task routes. Confirm the matching MCP consent/auth changes are deployed too.
+1. Deploy [Phaenix PR #4124](https://github.com/phaenixorg/phaenix/pull/4124), including registration validation, the `AutomatedTask`/`AutomatedTaskJob` (type `INNOVATION_FEEDBACK`) schema and task routes. Confirm the matching MCP consent/auth changes are deployed too.
 2. Deploy [Altair PR #155](https://github.com/phaenixorg/altair/pull/155) through the normal release flow. Confirm the new tool and task contracts against that deployment with a dedicated test account and synthetic material.
 3. Release the matching [agent-plugin PR #1](https://github.com/lightbringer-patents/agent-plugin/pull/1) and [claude-plugin PR #1](https://github.com/lightbringer-patents/claude-plugin/pull/1) packages in coordination with the server. Both candidate packages are version 1.1.0. Follow the canonical plugin distribution guide for host submission and installation checks.
 4. Confirm this README matches the deployed catalog, update the release-status notice with the verified release/date, and merge this connector update. The candidate MCP registry metadata version is 1.1.0, independently versioned from the server and plugins. Publish it through the normal registry workflow, then verify the registry entry before changing the publication wording. Never infer publication from a GitHub merge.
