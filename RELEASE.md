@@ -31,7 +31,7 @@ The renamed tools have no compatibility aliases. Update installed skills, saved 
 
 - Discover the deployed tools and annotations with both read and read/write consent. Expect 18 tools with developer feedback configured, or 17 without it, for the full production catalog. Consent can reduce the visible set further.
 - Verify registration succeeds with a saved ID/link and warnings when appropriate; invalid payloads do not create records. Do not call registration to perform a validation-only request.
-- Start automated feedback and follow the same task ID through success, partial success and failure. Verify that successful findings survive sibling failures.
+- Start automated feedback and follow the same task ID through success, partial success and failure. Verify that successful findings survive sibling failures. Both tools must return readable `title`/`description` findings and public analysis names, including cached results; deploy Phaenix rich-text rendering before Altair normalization. Unsupported results must produce `findings_error`, never raw editor JSON or an empty-success fallback.
 - Request preparation for an explicitly selected innovation. Check both `requested` and `already_requested`; do not interpret either as completed filing or poll the innovation ID as a task.
 - Build the portable and Claude packages using agent-plugin's release script; verify the complete skills trees are identical and that the skills are available in each target host.
 - Compare registry and plugin endpoint, service positioning, tool names and scope guidance with the deployed server. Read-only hints and consent scopes describe different properties.
