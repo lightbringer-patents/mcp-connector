@@ -68,7 +68,7 @@ Other hosts use their own connector UI or transport label; follow the matching p
 
 ## Tools
 
-The upcoming full production catalog contains 18 tools: 9 annotated read-only and 9 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 17 tools. Clients should discover their available tools through `tools/list`.
+The upcoming full production catalog contains 20 tools: 10 annotated read-only and 10 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 19 tools. Clients should discover their available tools through `tools/list`.
 
 | Tool | Type | Purpose |
 |---|---|---|
