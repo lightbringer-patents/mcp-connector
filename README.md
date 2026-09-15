@@ -4,7 +4,7 @@ Work with [Lightbringer's patent service](https://lightbringer.com) from your AI
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
-> **Release status:** This branch documents the upcoming innovation-tool release. It depends on the matching [Phaenix task and registration changes](https://github.com/phaenixorg/phaenix/pull/4124), [Altair server changes](https://github.com/phaenixorg/altair/pull/155), [agent-plugin package](https://github.com/lightbringer-patents/agent-plugin/pull/1) and [claude-plugin package](https://github.com/lightbringer-patents/claude-plugin/pull/1). The new tool names are not a claim about the deployed endpoint. See [release coordination](RELEASE.md) before merging or publishing.
+> **Release status:** The live endpoint was verified on 2026-09-15: Altair 4.7.0 advertises the 20 tools and four prompts documented below. The matching Phaenix 12.5.0 release is deployed. Connector metadata and both workflow plugin packages are version 1.1.0; repository releases, MCP registry publication and host-directory publication are separate steps. See [release coordination](RELEASE.md).
 
 This is a metadata and documentation repository for a remote, hosted MCP server. Lightbringer operates the server; there is no server code to install or run from this repository.
 
@@ -68,7 +68,7 @@ Other hosts use their own connector UI or transport label; follow the matching p
 
 ## Tools
 
-The upcoming full production catalog contains 20 tools: 10 annotated read-only and 10 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 19 tools. Clients should discover their available tools through `tools/list`.
+The full production catalog verified on 2026-09-15 contains 20 tools: 9 annotated read-only and 11 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 19 tools: 9 read-only and 10 non-read-only. Clients should discover their available tools through `tools/list`.
 
 | Tool | Type | Purpose |
 |---|---|---|
@@ -80,24 +80,24 @@ The upcoming full production catalog contains 20 tools: 10 annotated read-only a
 | `get_innovation_template` | read | Retrieve the structured registration template. |
 | `list_reviews` | read | Locate report and patent-draft reviews. |
 | `get_review` | read | Read review documents, comments and discussion. |
-| `get_task_status` | read | Follow an automated feedback task using its `task_id`. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
 | `start_innovation_feedback` | write¹ | Dispatch automated description analysis and return a task. |
+| `get_task_status` | write¹ | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
 | `add_comment` | write | Add a comment anchored to a review document passage. |
 | `reply_to_comment` | write | Reply to an existing comment thread. |
 | `add_discussion_comment` | write | Add a general review discussion comment. |
 | `send_developer_feedback` | write² | Report tool problems or missing capabilities to Lightbringer. |
 
-¹ Available under read consent; annotated non-read-only because it dispatches background analysis. It does not edit the innovation description.
+¹ Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
 
 ² Available under read consent when its delivery channel is configured. Sends tool feedback to the Lightbringer engineering team through Slack.
 
-The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. All of those except `delete_task` and `update_innovation` also carry `openWorldHint: true`, reflecting outgoing notifications or feedback delivery. Other tools advertise both hints as false. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. All tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is delivered to Lightbringer's engineering Slack channel. Annotations describe behavior; they do not grant access.
 
 ## Registration, automated tasks and professional requests
 
@@ -113,7 +113,7 @@ Tasks and findings expire 30 days after creation; reading does not consume them 
 
 ## Registry and related repositories
 
-The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its version is separate from the plugin and server versions. The metadata on this branch is a release candidate, not evidence of registry publication.
+The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its version is separate from the plugin and server versions. On 2026-09-15, the registry still listed 1.0.4 as latest; publishing and verifying the 1.1.0 metadata is a separate step after the repository release.
 
 - [Canonical skills and portable plugin](https://github.com/lightbringer-patents/agent-plugin)
 - [Claude plugin and marketplace](https://github.com/lightbringer-patents/claude-plugin)
