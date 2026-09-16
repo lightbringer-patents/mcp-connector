@@ -4,7 +4,7 @@ Work with [Lightbringer's patent service](https://lightbringer.com) from your AI
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
-> **Release status:** The live endpoint was verified on 2026-09-15: Altair 4.7.0 advertises the 20 tools and four prompts documented below. The matching Phaenix 12.5.0 release is deployed. Connector metadata and both workflow plugin packages are version 1.1.0; repository releases, MCP registry publication and host-directory publication are separate steps. See [release coordination](RELEASE.md).
+> **Release status:** Public discovery on 2026-09-15 verified the 20 tools and four prompts documented below. Connector metadata is version 1.1.0; workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
 
 This is a metadata and documentation repository for a remote, hosted MCP server. Lightbringer operates the server; there is no server code to install or run from this repository.
 
@@ -95,9 +95,9 @@ The full production catalog verified on 2026-09-15 contains 20 tools: 9 annotate
 
 ¹ Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
 
-² Available under read consent when its delivery channel is configured. Sends tool feedback to the Lightbringer engineering team through Slack.
+² Available under read consent when developer feedback is enabled. Sends tool feedback to the Lightbringer engineering team.
 
-The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. All tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is delivered to Lightbringer's engineering Slack channel. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. All tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
 
 ## Registration, automated tasks and professional requests
 
