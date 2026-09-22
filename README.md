@@ -4,7 +4,7 @@ Work with [Lightbringer's patent service](https://lightbringer.com) from your AI
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
-> **Release status:** Public discovery on 2026-09-15 verified the 20 tools and four prompts documented below. Connector metadata is version 1.1.0; workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
+> **Release status:** Public discovery on 2026-09-15 verified the 20 tools and four prompts documented below. Connector metadata is version 4.9.0, equal to the version the Lightbringer MCP service reports in `serverInfo.version`; workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
 
 This is a metadata and documentation repository for a remote, hosted MCP server. Lightbringer operates the server; there is no server code to install or run from this repository.
 
@@ -113,7 +113,7 @@ Tasks and findings expire 30 days after creation; reading does not consume them 
 
 ## Registry and related repositories
 
-The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its version is separate from the plugin and server versions. On 2026-09-15, the registry still listed 1.0.4 as latest; publishing and verifying the 1.1.0 metadata is a separate step after the repository release.
+The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. On 2026-09-22 the service reported 4.9.0 while the registry still listed 1.0.4 as latest; publishing and verifying the 4.9.0 metadata is a separate step after the repository release.
 
 - [Canonical skills and portable plugin](https://github.com/lightbringer-patents/agent-plugin)
 - [Claude plugin and marketplace](https://github.com/lightbringer-patents/claude-plugin)

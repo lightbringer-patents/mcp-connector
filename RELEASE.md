@@ -2,16 +2,16 @@
 
 Public discovery on 2026-09-15 confirmed the Lightbringer MCP service's 20-tool catalog, four prompts and OAuth resource metadata. Package builds and manifest validation passed during that review. These checks do not establish that authenticated production workflows or host installation acceptance cases have passed.
 
-The connector metadata in `server.json` is version 1.1.0. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
+The connector metadata in `server.json` is version 4.9.0, equal to the version the Lightbringer MCP service reports in `serverInfo.version`. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
 
 ## Package and registry publication
 
 1. **Verify compatibility:** confirm the public tools, prompts, OAuth metadata and supported workflows against the acceptance checks below. Use a dedicated test account and synthetic material for authenticated checks, and record what was actually tested.
 2. **Prepare the workflow packages:** keep the complete `skills/` trees identical between the portable and Claude packages. Follow the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for package validation, host submission and installation checks.
-3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface and intended connector version.
+3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface, and that `version` equals the `serverInfo.version` returned by the service on `initialize`.
 4. **Publish and verify each channel:** publish the connector metadata to the MCP registry and verify the resulting entry. Complete each host's separate submission and publication flow for the plugin packages. Never infer publication or host approval from a GitHub merge.
 
-The registry listed 1.0.4 as latest during verification on 2026-09-15. This dated observation does not establish its current status; verify the listing before claiming that connector metadata 1.1.0 is published.
+The registry listed 1.0.4 as latest on 2026-09-22, while the service reported 4.9.0. This dated observation does not establish its current status; verify the listing before claiming that connector metadata 4.9.0 is published.
 
 ## Contract migration
 
