@@ -11,7 +11,7 @@ The connector metadata in `server.json` is version 4.9.0, equal to the version t
 3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface, and that `version` equals the `serverInfo.version` returned by the service on `initialize`.
 4. **Publish and verify each channel:** publish the connector metadata to the MCP registry and verify the resulting entry. Complete each host's separate submission and publication flow for the plugin packages. Never infer publication or host approval from a GitHub merge.
 
-The registry listed 1.0.4 as latest on 2026-09-22, while the service reported 4.9.0. This dated observation does not establish its current status; verify the listing before claiming that connector metadata 4.9.0 is published.
+Connector metadata 4.9.0 was published on 2026-09-22 and the registry returned it as the latest entry, matching the 4.9.0 the service reported. This is a dated observation; verify the listing before relying on it.
 
 ## Contract migration
 

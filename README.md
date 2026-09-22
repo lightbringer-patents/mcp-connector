@@ -113,7 +113,7 @@ Tasks and findings expire 30 days after creation; reading does not consume them 
 
 ## Registry and related repositories
 
-The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. On 2026-09-22 the service reported 4.9.0 while the registry still listed 1.0.4 as latest; publishing and verifying the 4.9.0 metadata is a separate step after the repository release.
+The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. Connector metadata 4.9.0 was published to the registry on 2026-09-22 and verified as the latest entry. Publishing is a separate step after a repository release; a merge here does not update the registry.
 
 - [Canonical skills and portable plugin](https://github.com/lightbringer-patents/agent-plugin)
 - [Claude plugin and marketplace](https://github.com/lightbringer-patents/claude-plugin)
