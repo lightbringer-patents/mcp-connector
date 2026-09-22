@@ -41,27 +41,32 @@ Setup is a simple authorization flow that enables secure access to invention rec
 
 ## Tools
 
-17 tools — 11 read-only, 6 write:
+20 tools — 9 read-only, 11 write:
 
-| Tool | Type |
-|---|---|
-| `whoami` | read |
-| `search` | read |
-| `fetch` | read |
-| `list_inventions` | read |
-| `get_invention` | read |
-| `get_invention_template` | read |
-| `validate_invention` | read |
-| `get_invention_feedback` | read |
-| `list_reviews` | read |
-| `get_review` | read |
-| `check_task_status` | read |
-| `create_invention` | write |
-| `update_invention` | write |
-| `submit_invention` | write |
-| `respond_to_review` | write |
-| `add_comment` | write |
-| `reply_to_comment` | write |
+| Tool | Type | What it does |
+|---|---|---|
+| `whoami` | read | Returns the signed-in user and organisation |
+| `search` | read | Searches the organisation's inventions, patent applications, and reviews |
+| `fetch` | read | Returns the full content of a single document |
+| `list_innovations` | read | Lists the innovations in the organisation |
+| `get_innovation` | read | Returns an innovation record as markdown |
+| `get_innovation_template` | read | Returns the current innovation registration template |
+| `list_tasks` | read | Lists the user's automated feedback tasks |
+| `list_reviews` | read | Lists reviews the user participates in |
+| `get_review` | read | Returns a review with its document and comments |
+| `register_innovation` | write | Registers a new innovation from a structured payload |
+| `update_innovation` | write | Updates sections of an existing innovation |
+| `request_patent_preparation` | write | Requests Lightbringer patent preparation for a registered innovation |
+| `start_innovation_feedback` | write | Starts automated analysis of an innovation description |
+| `get_task_status` | write | Returns the status, progress, and findings of an automated task |
+| `delete_task` | write | Permanently deletes one of the user's automated tasks |
+| `send_developer_feedback` | write | Sends a report about the tools to the Lightbringer engineering team |
+| `respond_to_review` | write | Records an approve or request-changes decision on a review |
+| `add_comment` | write | Adds a comment anchored to a passage of the reviewed document |
+| `add_discussion_comment` | write | Posts a comment to the review's discussion feed |
+| `reply_to_comment` | write | Replies to an existing comment thread |
+
+Registering an innovation and requesting patent preparation are separate actions. Registration saves the innovation; a preparation request tells Lightbringer you want it prepared for patent filing. Automated feedback runs as a task: start it, then read its status and findings by task ID.
 
 ## Registry
 
