@@ -4,8 +4,6 @@ Work with [Lightbringer's patent service](https://lightbringer.com) from your AI
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
-> **Release status:** Public discovery on 2026-09-28 returned the 20 tools and four prompts documented below, with service version 4.10.0. Connector metadata is prepared at version 4.10.0 to match `serverInfo.version`; the registry still listed 4.9.0 at that check. Workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
-
 This is a metadata and documentation repository for a remote, hosted MCP server. Lightbringer operates the server; there is no server code to install or run from this repository.
 
 ## What you can do
@@ -15,6 +13,7 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
 - **Collaborate with your patent team.** Read reviews, attorney comments and proposed amendments; add comments, reply in discussions and respond to reviews using your existing permissions.
+- **Import portfolios and build patent families.** Find public publications by company name or publication number, import your own patents or third-party references, and group saved own patents into families. This workflow requires the [portfolio tools](#portfolio-tool-availability) in your connection.
 
 MCP access is available to Lightbringer platform subscribers, free or paid. Professional work is provided through separate paid engagements. The tools below define what can be initiated or consumed directly through MCP today; other service arrangements continue through the platform or Lightbringer team, including meetings where relevant. Agents cannot make payments.
 
@@ -40,8 +39,9 @@ The MCP server supplies available tools, schemas and general service instruction
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
+| `patent-portfolio` | Discover and import public publications, group saved own patents into families, and check for new publications. |
 
-The proposed `patent-portfolio` skill adds assignee discovery, single and portfolio imports, and updates to saved patent families. It is being prepared in [agent-plugin #6](https://github.com/lightbringer-patents/agent-plugin/pull/6) and [claude-plugin #5](https://github.com/lightbringer-patents/claude-plugin/pull/5) for package version 1.2.0. Its required tools were absent from public discovery on 2026-09-28; installing the skill alone will not enable those operations. See [portfolio tool availability](#portfolio-tool-availability).
+The `patent-portfolio` skill requires `search_public_patents`, `import_patent` and `refresh_patent_family`. Use the tools advertised by your connection; installing a skill does not enable missing service capabilities. See the [release and compatibility guide](RELEASE.md) for package status and dated verification results.
 
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
@@ -50,6 +50,8 @@ After connecting and installing the matching skills, try:
 > Use Lightbringer's innovation-capture skill to identify potential innovations in the technical work we have discussed. Search for existing records, register new innovations and enrich relevant existing ones using supported facts. Preserve open questions and report anything that could not be saved. Do not request patent preparation; registration is the goal for now.
 
 For a separate preparation request: “I want Lightbringer to prepare innovation X for patent filing.” For review work: “Help me respond to the patent team's review of X.”
+
+For portfolio work: “Find publications filed under these company names and import our portfolio.” For family grouping: “Group these saved patents into families.”
 
 ### Connect an MCP client directly
 
@@ -103,15 +105,15 @@ The following tools carry `destructiveHint: true`: `delete_task`, `update_innova
 
 ## Portfolio tool availability
 
-The portfolio workflow requires the following tools to be advertised by the connected service. They were not present in public discovery on 2026-09-28 and are not included in the catalog above.
+The portfolio workflow requires the following tools to be advertised by the connected service. These are listed separately from the dated catalog above; see the [release and compatibility guide](RELEASE.md#portfolio-workflow-compatibility) for verification status.
 
 | Tool | Intended workflow |
 |---|---|
 | `search_public_patents` | Find public patent publications by assignee, keywords or complete publication number. |
 | `import_patent` | Save a selected publication as an own patent or third-party reference. |
-| `refresh_patent_family` | Update family grouping among saved own patents. |
+| `refresh_patent_family` | Build or update family grouping among saved own patents. |
 
-Family updates do not import additional family members or update patent text, assets or legal status. Use the schemas and permissions advertised by the connection, and report unavailable operations. The plugin distribution guide includes portfolio acceptance cases to run when these tools become available.
+Import selected publications before updating their family grouping. Family updates apply to saved own patents; they do not import additional members or update patent text, PDFs, images or legal status. Results report counts and warnings rather than a list of family members. Use the schemas and permissions advertised by the connection, and report unavailable operations.
 
 ## Registration, automated tasks and professional requests
 
