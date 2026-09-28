@@ -4,7 +4,7 @@ Work with [Lightbringer's patent service](https://lightbringer.com) from your AI
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
-> **Release status:** Public discovery on 2026-09-15 verified the 20 tools and four prompts documented below. Connector metadata is version 4.9.0, equal to the version the Lightbringer MCP service reports in `serverInfo.version`; workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
+> **Release status:** Public discovery on 2026-09-28 returned the 20 tools and four prompts documented below, with service version 4.10.0. Connector metadata is prepared at version 4.10.0 to match `serverInfo.version`; the registry still listed 4.9.0 at that check. Workflow plugin packages are versioned separately. Repository releases, MCP registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for verification scope and publication steps.
 
 This is a metadata and documentation repository for a remote, hosted MCP server. Lightbringer operates the server; there is no server code to install or run from this repository.
 
@@ -41,6 +41,8 @@ The MCP server supplies available tools, schemas and general service instruction
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
 
+The proposed `patent-portfolio` skill adds assignee discovery, single and portfolio imports, and updates to saved patent families. It is being prepared in [agent-plugin #6](https://github.com/lightbringer-patents/agent-plugin/pull/6) and [claude-plugin #5](https://github.com/lightbringer-patents/claude-plugin/pull/5) for package version 1.2.0. Its required tools were absent from public discovery on 2026-09-28; installing the skill alone will not enable those operations. See [portfolio tool availability](#portfolio-tool-availability).
+
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
 After connecting and installing the matching skills, try:
@@ -68,7 +70,7 @@ Other hosts use their own connector UI or transport label; follow the matching p
 
 ## Tools
 
-The full production catalog verified on 2026-09-15 contains 20 tools: 9 annotated read-only and 11 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 19 tools: 9 read-only and 10 non-read-only. Clients should discover their available tools through `tools/list`.
+The public catalog observed on 2026-09-28 contains 20 tools: 9 annotated read-only and 11 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 19 tools: 9 read-only and 10 non-read-only. Clients should discover their available tools through `tools/list`.
 
 | Tool | Type | Purpose |
 |---|---|---|
@@ -97,7 +99,19 @@ The full production catalog verified on 2026-09-15 contains 20 tools: 9 annotate
 
 ² Available under read consent when developer feedback is enabled. Sends tool feedback to the Lightbringer engineering team.
 
-The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. All tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. All tools in this observed catalog advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
+
+## Portfolio tool availability
+
+The portfolio workflow requires the following tools to be advertised by the connected service. They were not present in public discovery on 2026-09-28 and are not included in the catalog above.
+
+| Tool | Intended workflow |
+|---|---|
+| `search_public_patents` | Find public patent publications by assignee, keywords or complete publication number. |
+| `import_patent` | Save a selected publication as an own patent or third-party reference. |
+| `refresh_patent_family` | Update family grouping among saved own patents. |
+
+Family updates do not import additional family members or update patent text, assets or legal status. Use the schemas and permissions advertised by the connection, and report unavailable operations. The plugin distribution guide includes portfolio acceptance cases to run when these tools become available.
 
 ## Registration, automated tasks and professional requests
 
@@ -107,13 +121,13 @@ The following tools carry `destructiveHint: true`: `delete_task`, `update_innova
 
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
 
-The four user-invoked MCP prompts are `draft-invention-disclosure`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the three plugin skills provide fuller workflow guidance.
+The four user-invoked MCP prompts are `draft-invention-disclosure`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the plugin skills provide fuller workflow guidance.
 
 Tasks and findings expire 30 days after creation; reading does not consume them or extend retention. Use `list_tasks`, optionally filtered by `invention_id`, to recover a lost task ID in the connected organisation. Follow `next_cursor` even if access filtering returns an empty page; listing reports recorded status without polling. `delete_task` permanently removes the user’s task and findings when requested, in any execution state, with write consent. Deletion does not cancel the analysis, delete the innovation or withdraw a service request.
 
 ## Registry and related repositories
 
-The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. Connector metadata 4.9.0 was published to the registry on 2026-09-22 and verified as the latest entry. Publishing is a separate step after a repository release; a merge here does not update the registry.
+The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. The registry still listed 4.9.0 as its latest entry on 2026-09-28, while the service reported 4.10.0. This repository prepares matching 4.10.0 metadata; registry publication remains outstanding. Publishing is a separate step after a repository release; a merge here does not update the registry.
 
 - [Canonical skills and portable plugin](https://github.com/lightbringer-patents/agent-plugin)
 - [Claude plugin and marketplace](https://github.com/lightbringer-patents/claude-plugin)
