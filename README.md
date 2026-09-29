@@ -41,7 +41,7 @@ The MCP server supplies available tools, schemas and general service instruction
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
 | `patent-portfolio` | Discover and import public publications, group saved own patents into families, and check for new publications. |
 
-The `patent-portfolio` skill requires `search_public_patents`, `import_patent` and `refresh_patent_family`. Use the tools advertised by your connection; installing a skill does not enable missing service capabilities. See the [release and compatibility guide](RELEASE.md) for package status and dated verification results.
+The `patent-portfolio` skill uses `search_public_patents` for discovery, `import_patent` for imports and `refresh_patent_family` for targeted updates to saved families. Use the tools advertised by your connection; installing a skill does not enable missing service capabilities. See the [release and compatibility guide](RELEASE.md) for package status and dated verification results.
 
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
@@ -113,7 +113,7 @@ The portfolio workflow requires the following tools to be advertised by the conn
 | `import_patent` | Save a selected publication as an own patent or third-party reference. |
 | `refresh_patent_family` | Build or update family grouping among saved own patents. |
 
-Import selected publications before updating their family grouping. Family updates apply to saved own patents; they do not import additional members or update patent text, PDFs, images or legal status. Results report counts and warnings rather than a list of family members. Use the schemas and permissions advertised by the connection, and report unavailable operations.
+Own-patent imports automatically attempt family grouping with related saved records, so a routine refresh after import is unnecessary. Use refresh for an apparent missing relationship, an unfinished family update or a requested check against newer public information. Refresh retains existing relationships; it cannot remove an incorrect relationship, import additional members or update patent text, PDFs, images or legal status. Results report counts and warnings rather than a list of family members. Use the schemas and permissions advertised by the connection, and report unavailable operations.
 
 ## Registration, automated tasks and professional requests
 
