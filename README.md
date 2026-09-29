@@ -9,12 +9,11 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use portfolio and strategy context.** Retrieve accessible records and strategy reports to guide exploration. Dedicated IP-strategy editing and trade-secret classification tools are not currently available; use the platform or continue with the Lightbringer team when needed.
+- **Use existing context.** Retrieve accessible innovations, patents, strategy reports and meeting notes or transcripts to guide your work. Dedicated IP-strategy editing and trade-secret classification tools are not currently available; use the platform or continue with the Lightbringer team when needed.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
-- **Read meeting context.** Search accessible meetings and retrieve their canvas notes and stored transcripts, including speakers, timestamps and session status.
 - **Collaborate with your patent team.** Read reviews, attorney comments and proposed amendments; add comments, reply in discussions and respond to reviews using your existing permissions.
-- **Import portfolios and build patent families.** Find public publications by company name or publication number, import your own patents or third-party references, and group saved own patents into families. This workflow requires the [portfolio tools](#portfolio-tool-availability) in your connection.
+- **Import portfolios and build patent families.** Find public publications by company name or publication number, import your own patents or third-party references, and group saved own patents into families.
 
 MCP access is available to Lightbringer platform subscribers, free or paid. Professional work is provided through separate paid engagements. The tools below define what can be initiated or consumed directly through MCP today; other service arrangements continue through the platform or Lightbringer team, including meetings where relevant. Agents cannot make payments.
 
@@ -42,7 +41,7 @@ The MCP server supplies available tools, schemas and general service instruction
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
 | `patent-portfolio` | Discover and import public publications, group saved own patents into families, and check for new publications. |
 
-The `patent-portfolio` skill uses `search_public_patents` for discovery, `import_patent` for imports and `refresh_patent_family` for targeted updates to saved families. Use the tools advertised by your connection; installing a skill does not enable missing service capabilities. See the [release and compatibility guide](RELEASE.md) for package status and dated verification results.
+See the [release and compatibility guide](RELEASE.md) for package status and verification results.
 
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
@@ -73,16 +72,14 @@ Other hosts use their own connector UI or transport label; follow the matching p
 
 ## Tools
 
-The public catalog observed on 2026-09-29 reports service version 4.11.0 and contains 23 tools: 10 annotated read-only and 13 annotated non-read-only. The table uses `readOnlyHint`, not OAuth scope. Actual availability depends on consented scopes and configuration; without the optional developer-feedback delivery channel, there are 22 tools: 10 read-only and 12 non-read-only. Clients should discover their available tools through `tools/list`.
+The table describes each tool's purpose. Its read/write labels follow `readOnlyHint`, not OAuth scope. Availability depends on consented scopes, permissions and service configuration; clients should discover their available tools and schemas through `tools/list`.
 
 | Tool | Type | Purpose |
 |---|---|---|
 | `whoami` | read | Identify the connected user and organisation. |
-| `search` | read | Find accessible innovations, documents and meetings; use `category: "meeting"` for meeting context. |
+| `search` | read | Find accessible innovations, documents and meetings. |
 | `fetch` | read | Retrieve a record, document or meeting snapshot found through search. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
-| `import_patent` | write | Save a publication as an own patent or third-party reference. |
-| `refresh_patent_family` | write | Update family grouping among saved own patents. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
@@ -91,6 +88,8 @@ The public catalog observed on 2026-09-29 reports service version 4.11.0 and con
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
+| `import_patent` | write | Save a publication as an own patent or third-party reference. |
+| `refresh_patent_family` | write | Update family grouping among saved own patents. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
 | `start_innovation_feedback` | write¹ | Dispatch automated description analysis and return a task. |
@@ -107,23 +106,7 @@ The public catalog observed on 2026-09-29 reports service version 4.11.0 and con
 
 The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. The other tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
 
-## Portfolio tool availability
-
-Public discovery on 2026-09-29 advertised all three portfolio tools below. Search requires `mcp:read`; import and family refresh require `mcp:write` and the relevant organisation permissions. Discovery confirms the advertised interface; authenticated portfolio workflows and host installation acceptance remain separate checks. See the [release and compatibility guide](RELEASE.md#portfolio-workflow-compatibility).
-
-| Tool | Intended workflow |
-|---|---|
-| `search_public_patents` | Find public patent publications by assignee, keywords or complete publication number. |
-| `import_patent` | Save a selected publication as an own patent or third-party reference. |
-| `refresh_patent_family` | Build or update family grouping among saved own patents. |
-
-Own-patent imports automatically attempt family grouping with related saved records, so a routine refresh after import is unnecessary. Use refresh for an apparent missing relationship, an unfinished family update or a requested check against newer public information. Refresh retains existing relationships; it cannot remove an incorrect relationship, import additional members or update patent text, PDFs, images or legal status. Results report counts and warnings rather than a list of family members. Use the schemas and permissions advertised by the connection, and report unavailable operations.
-
-## Meeting search and retrieval
-
-Use `search` with `category: "meeting"` to find accessible meetings by title, reference or indexed transcript/canvas text. Pass the returned `meeting:<id>` identifier unchanged to `fetch`. The result is a Markdown snapshot of canvas text notes and all stored transcript sessions, with speaker names, timestamps and session status. Empty canvases and unavailable transcripts are stated explicitly; an active session can gain more transcript text after the snapshot. Meeting access follows the connected organisation and existing permissions. These operations use the existing read consent.
-
-## Registration, automated tasks and professional requests
+## Workflow behavior
 
 **Registration saves a record.** `register_innovation` validates before saving. Validation errors mean nothing was registered; success returns the saved ID/link and any non-blocking warnings. Warnings do not mean registration failed. There is no separate MCP validation tool. Incomplete ideas that cannot satisfy the schema should remain explicitly pending registration rather than being filled with invented details.
 
@@ -131,13 +114,15 @@ Use `search` with `category: "meeting"` to find accessible meetings by title, re
 
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
 
+**Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
+
 The four user-invoked MCP prompts are `draft-invention-disclosure`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the plugin skills provide fuller workflow guidance.
 
 Tasks and findings expire 30 days after creation; reading does not consume them or extend retention. Use `list_tasks`, optionally filtered by `invention_id`, to recover a lost task ID in the connected organisation. Follow `next_cursor` even if access filtering returns an empty page; listing reports recorded status without polling. `delete_task` permanently removes the user’s task and findings when requested, in any execution state, with write consent. Deletion does not cancel the analysis, delete the innovation or withdraw a service request.
 
 ## Registry and related repositories
 
-The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` equals the version the Lightbringer MCP service reports in `serverInfo.version` on `initialize`: the registry schema defines the field as the equivalent of the MCP `Implementation.version`. Plugin packages are versioned separately. The registry listed 4.9.0 as its latest entry on 2026-09-28. This repository prepares 4.11.0 metadata, matching the service observed on 2026-09-29. Registry requests timed out during that check, so current publication status is unverified; verify the current listing before publishing. Publishing is a separate step after a repository release; a merge here does not update the registry.
+The connector's MCP registry identity is [`com.lightbringer/connector`](https://registry.modelcontextprotocol.io/v0/servers?search=com.lightbringer/connector). `server.json` describes this remote connector; it does not bundle the workflow skills. Its `version` tracks the service's `serverInfo.version`, while plugin packages are versioned separately. Repository merges, registry publication and host-directory publication are separate steps. See the [release and compatibility guide](RELEASE.md) for version and publication status.
 
 - [Canonical skills and portable plugin](https://github.com/lightbringer-patents/agent-plugin)
 - [Claude plugin and marketplace](https://github.com/lightbringer-patents/claude-plugin)
