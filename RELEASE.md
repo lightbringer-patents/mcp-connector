@@ -11,7 +11,7 @@ The connector metadata in `server.json` is prepared at version 4.11.0, matching 
 3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface, and that `version` equals the `serverInfo.version` returned by the service on `initialize`.
 4. **Publish and verify each channel:** publish the connector metadata to the MCP registry and verify the resulting entry. Complete each host's separate submission and publication flow for the plugin packages. Never infer publication or host approval from a GitHub merge.
 
-Connector metadata 4.9.0 was published on 2026-09-22 and remained the registry's latest entry on 2026-09-28. Registry requests on 2026-09-29 timed out, so current publication status is unverified. Check for matching 4.11.0 metadata before publishing; verify both the service and registry again.
+Connector metadata 4.11.0 was published on 2026-09-29 after registry validation and a production version check. The [4.11.0 registry entry](https://registry.modelcontextprotocol.io/v0.1/servers/com.lightbringer%2Fconnector/versions/4.11.0) was independently verified as active and marked latest. Registry reads were intermittently timing out; a read timeout is not a reason to republish.
 
 ## Portfolio workflow compatibility
 
