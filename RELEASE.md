@@ -17,6 +17,8 @@ Connector metadata 4.9.0 was published on 2026-09-22 and remained the registry's
 
 Package version 1.2.0 is being prepared with a `patent-portfolio` skill in [agent-plugin #6](https://github.com/lightbringer-patents/agent-plugin/pull/6) and [claude-plugin #5](https://github.com/lightbringer-patents/claude-plugin/pull/5). The skill requires `search_public_patents` for discovery, `import_patent` for saving publications, and `refresh_patent_family` for family updates. Public discovery on 2026-09-28 did not advertise these tools. Package availability and service capability must be checked separately.
 
+The next workflow-package release, 1.3.0, adds read-only saved-portfolio review and verification after authorised updates. Structured saved-family overviews in `search` and `fetch` require separate verification. The dated discovery above does not verify these response fields. Acceptance must cover read-only portfolio pagination, member visibility, priority provenance, distinct counts, missing-link assessments, and readback after authorised updates.
+
 Before documenting portfolio operations as available:
 
 - Discover these tools and their schemas and annotations under the relevant consent scopes. Recount the catalog and update the README's annotation summary; the portfolio tools use external patent sources and are expected to advertise `openWorldHint: true`.

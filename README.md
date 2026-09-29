@@ -115,6 +115,16 @@ The portfolio workflow requires the following tools to be advertised by the conn
 
 Own-patent imports automatically attempt family grouping with related saved records, so a routine refresh after import is unnecessary. Use refresh for an apparent missing relationship, an unfinished family update or a requested check against newer public information. Refresh retains existing relationships; it cannot remove an incorrect relationship, import additional members or update patent text, PDFs, images or legal status. Results report counts and warnings rather than a list of family members. Use the schemas and permissions advertised by the connection, and report unavailable operations.
 
+## Review saved portfolios and families
+
+Use `search` without a query and with `category: application` or `category: patent`, following pagination, to list saved applications and granted patents. Use `fetch` to read selected records. Competitor references and innovations are separate categories.
+
+Connections that return a structured `family` field support an overview of accessible saved members, jurisdictions, recorded statuses, priority-date provenance and coverage limits. Group by `groupingKey` for the current view and distinguish family, application and recorded-publication counts; do not add the same family counts once for every member. Keys can change as links or access change, lists may be truncated, and coverage remains unverified.
+
+The per-record `family.refresh` assessment compares stored references with saved relationships without calling a provider or changing records. `missing_links` identifies accessible saved matches lacking the expected link. `unresolved_references` requires investigation; `unknown` and `no_known_gap` do not establish complete coverage. A null or old refresh date alone is not a reason to refresh. Record eligibility does not grant write permission.
+
+For an authorised update, read the saved state, compare it with the requested change, perform supported imports or targeted refresh, and fetch affected records again to verify the result. A review-only request does not authorise writes. If family data is absent, report that limitation. Publication reconciliation and removal of incorrect relationships are not supported by these operations. See the [compatibility guide](RELEASE.md) for verification requirements; these response fields are not established as deployed by the dated catalog observation above.
+
 ## Registration, automated tasks and professional requests
 
 **Registration saves a record.** `register_innovation` validates before saving. Validation errors mean nothing was registered; success returns the saved ID/link and any non-blocking warnings. Warnings do not mean registration failed. There is no separate MCP validation tool. Incomplete ideas that cannot satisfy the schema should remain explicitly pending registration rather than being filled with invented details.
