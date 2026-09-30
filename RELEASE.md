@@ -2,7 +2,7 @@
 
 Public discovery on 2026-09-29 returned service version 4.11.0, 23 tools and four prompts, including patent search, import and family refresh. The search and fetch schemas also describe meeting discovery and canvas/transcript retrieval. Protected-resource metadata was checked. Both 1.2.0 plugin packages built with identical skills trees; release-builder tests and strict validation of the packaged Claude manifest, marketplace and skills passed. These checks do not establish that authenticated production workflows or host installation acceptance cases have passed.
 
-The connector metadata in `server.json` is prepared at version 4.11.0, matching the service's `serverInfo.version` observed on 2026-09-29. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
+The connector metadata in `server.json` is prepared at version 4.12.0, the service version for this release; `version` must equal the `serverInfo.version` the service reports. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
 
 ## Package and registry publication
 
@@ -11,11 +11,13 @@ The connector metadata in `server.json` is prepared at version 4.11.0, matching 
 3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface, and that `version` equals the `serverInfo.version` returned by the service on `initialize`.
 4. **Publish and verify each channel:** publish the connector metadata to the MCP registry and verify the resulting entry. Complete each host's separate submission and publication flow for the plugin packages. Never infer publication or host approval from a GitHub merge.
 
-Connector metadata 4.9.0 was published on 2026-09-22 and remained the registry's latest entry on 2026-09-28. Registry requests on 2026-09-29 timed out, so current publication status is unverified. Check for matching 4.11.0 metadata before publishing; verify both the service and registry again.
+Connector metadata 4.11.0 was published on 2026-09-29 after registry validation and a production version check. The [4.11.0 registry entry](https://registry.modelcontextprotocol.io/v0.1/servers/com.lightbringer%2Fconnector/versions/4.11.0) was independently verified as active and marked latest. Registry reads were intermittently timing out; a read timeout is not a reason to republish. Publish matching 4.12.0 metadata after this update merges, then verify the resulting registry entry.
 
 ## Portfolio workflow compatibility
 
 Package version 1.2.0 is being prepared with a `patent-portfolio` skill in [agent-plugin #6](https://github.com/lightbringer-patents/agent-plugin/pull/6) and [claude-plugin #5](https://github.com/lightbringer-patents/claude-plugin/pull/5). The skill requires `search_public_patents` for discovery, `import_patent` for saving publications, and `refresh_patent_family` for family updates. Public discovery on 2026-09-29 advertised all three tools and their input/output schemas. Package availability and service capability must be checked separately.
+
+From service version 4.12.0, the plain-text restriction on `search_public_patents` text inputs is enforced when the tool is called instead of being advertised as a JSON Schema `pattern`, so clients that do not support Unicode property escapes in schema patterns can load the tool. Accepted input is unchanged: provider query syntax is still rejected with a validation error.
 
 Before claiming authenticated portfolio workflow or host acceptance:
 
