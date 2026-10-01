@@ -9,7 +9,8 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Retrieve accessible innovations, patents, strategy reports and meeting notes or transcripts to guide your work. Dedicated IP-strategy editing and trade-secret classification tools are not currently available; use the platform or continue with the Lightbringer team when needed.
+- **Use existing context.** Retrieve accessible innovations, patents, strategy reports and meeting notes or transcripts to guide your work. Trade-secret classification is not exposed through the current tools.
+- **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
 - **Collaborate with your patent team.** Read reviews, attorney comments and proposed amendments; add comments, reply in discussions and respond to reviews using your existing permissions.
@@ -39,7 +40,8 @@ The MCP server supplies available tools, schemas and general service instruction
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
-| `patent-portfolio` | Discover and import public publications, group saved own patents into families, and check for new publications. |
+| `patent-portfolio` | Review saved portfolios and families, discover and import publications, and verify authorised family updates. |
+| `ip-strategy` | Build and revise an evidence-based Strategy using current capture guidance and revision-aware edits. |
 
 See the [release and compatibility guide](RELEASE.md) for package status and verification results.
 
@@ -82,6 +84,13 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
+| `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
+| `list_strategies` | read | List accessible Strategies and their publication status. |
+| `get_strategy` | read | Read Strategy sections and the current edit revision. |
+| `create_strategy` | write | Save a populated draft Strategy. |
+| `edit_strategy` | write | Apply direct section edits using the current revision, preserving unrelated content. |
+| `set_strategy_publication` | write | Publish a Strategy or return it to draft when explicitly requested. |
+| `delete_strategy` | write | Permanently delete a selected Strategy when explicitly requested. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
 | `list_reviews` | read | Locate report and patent-draft reviews. |
 | `get_review` | read | Read review documents, comments and discussion. |
@@ -104,7 +113,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ² Available under read consent when developer feedback is enabled. Sends tool feedback to the Lightbringer engineering team.
 
-The following tools carry `destructiveHint: true`: `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. The other tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. The other tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
 
@@ -116,7 +125,13 @@ The following tools carry `destructiveHint: true`: `delete_task`, `update_innova
 
 **Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
 
-The four user-invoked MCP prompts are `draft-invention-disclosure`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the plugin skills provide fuller workflow guidance.
+**Saved-portfolio reviews use saved records.** Paginate `search` across application and patent categories and use `fetch` for selected records. Optional `family` overviews describe accessible saved members, jurisdictions, recorded statuses, priority provenance and coverage limits. Group by the current `groupingKey` and count families, applications and recorded publications separately, without counting one family's totals for each member. Keys can change, lists can be truncated and coverage remains unverified.
+
+A per-record `family.refresh` assessment checks stored references without changing records. Known `missing_links` can justify an authorised refresh; unresolved references require investigation. Unknown data or old/null timestamps alone do not justify refresh. Review-only requests do not authorise writes. After authorised updates, fetch affected records again to verify the resulting family; if family data is absent, report that limit. See the [portfolio skill](https://github.com/lightbringer-patents/agent-plugin/tree/main/skills/patent-portfolio) for workflow details.
+
+**Strategy creation saves a draft.** Use `get_strategy_template` for capture and `get_strategy` before revision-aware edits. Replacements apply directly; conflicts require rereading and reconciliation, and edits intersecting pending review changes can be rejected. Creation and edits require Strategy management rights. Publication is a separate explicit action; multiple Strategies may be published at once. A saved Strategy does not itself import patents, request preparation or execute the actions written in it.
+
+The five user-invoked MCP prompts are `draft-invention-disclosure`, `draft-strategy`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the plugin skills provide fuller workflow guidance.
 
 Tasks and findings expire 30 days after creation; reading does not consume them or extend retention. Use `list_tasks`, optionally filtered by `invention_id`, to recover a lost task ID in the connected organisation. Follow `next_cursor` even if access filtering returns an empty page; listing reports recorded status without polling. `delete_task` permanently removes the user’s task and findings when requested, in any execution state, with write consent. Deletion does not cancel the analysis, delete the innovation or withdraw a service request.
 
