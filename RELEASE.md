@@ -2,7 +2,7 @@
 
 Public discovery on 2026-10-01 returned service version 4.13.1, 30 tools and five prompts, including seven Strategy tools and `draft-strategy`. The `search` and `fetch` output schemas advertise optional saved-family overviews. These observations verify anonymous discovery only; authenticated Strategy and family results, permissions and host installation remain separate acceptance checks.
 
-The connector metadata in `server.json` is prepared at version 4.13.1, the service version for this release; `version` must equal the `serverInfo.version` the service reports. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
+The connector metadata in `server.json` is version 4.13.1, the service version for this release; `version` must equal the `serverInfo.version` the service reports. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
 
 ## Package and registry publication
 
@@ -11,7 +11,9 @@ The connector metadata in `server.json` is prepared at version 4.13.1, the servi
 3. **Check connector metadata:** ensure `server.json` and the README describe the verified public interface, and that `version` equals the `serverInfo.version` returned by the service on `initialize`.
 4. **Publish and verify each channel:** publish the connector metadata to the MCP registry and verify the resulting entry. Complete each host's separate submission and publication flow for the plugin packages. Never infer publication or host approval from a GitHub merge.
 
-Connector metadata 4.11.0 was published on 2026-09-29 after registry validation and a production version check. The [4.11.0 registry entry](https://registry.modelcontextprotocol.io/v0.1/servers/com.lightbringer%2Fconnector/versions/4.11.0) was independently verified as active and marked latest. Registry reads were intermittently timing out; a read timeout is not a reason to republish. A read of the latest registry entry on 2026-10-01 still returned 4.11.0. Publish matching 4.13.1 metadata after this update merges, then verify the resulting registry entry.
+Connector metadata 4.13.1 was published on 2026-10-01 after registry validation and a production version check. The [latest registry entry](https://registry.modelcontextprotocol.io/v0.1/servers/com.lightbringer%2Fconnector/versions/latest) independently returned version 4.13.1 with active status and `isLatest: true`; its server metadata matched `server.json`. The registry recorded publication at 15:15:21 UTC. A concurrent exact-version read timed out; the successful latest-entry read confirmed publication, so no repeat publication was needed.
+
+The previous published version was 4.11.0, published on 2026-09-29. Registry publication is separate from plugin host approval and publication.
 
 ## Portfolio workflow compatibility
 
