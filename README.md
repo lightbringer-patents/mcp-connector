@@ -78,7 +78,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 | Tool | Type | Purpose |
 |---|---|---|
-| `whoami` | read | Identify the connected user and organisation. |
+| `whoami` | read | Identify the connected user and organisation, with optional country, state and website where available. |
 | `search` | read | Find accessible innovations, documents and meetings. |
 | `fetch` | read | Retrieve a record, document or meeting snapshot found through search. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
@@ -128,6 +128,10 @@ The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_stra
 **Saved-portfolio reviews use saved records.** Paginate `search` across application and patent categories and use `fetch` for selected records. Optional `family` overviews describe accessible saved members, jurisdictions, recorded statuses, priority provenance and coverage limits. Group by the current `groupingKey` and count families, applications and recorded publications separately, without counting one family's totals for each member. Keys can change, lists can be truncated and coverage remains unverified.
 
 A per-record `family.refresh` assessment checks stored references without changing records. Known `missing_links` can justify an authorised refresh; unresolved references require investigation. Unknown data or old/null timestamps alone do not justify refresh. Review-only requests do not authorise writes. After authorised updates, fetch affected records again to verify the resulting family; if family data is absent, report that limit. See the [portfolio skill](https://github.com/lightbringer-patents/agent-plugin/tree/main/skills/patent-portfolio) for workflow details.
+
+**Strategy dependencies follow the connected tools.** Start from organisation context and relevant saved records. `whoami` can supply missing organisation context; country, state and website are optional and may be absent on older connections. They do not classify the company or determine its first-filing office. Use relevant application-region metadata and the user's plans for filing context. Strategy capture depends on `list_strategies`, relevant `get_strategy` reads and `get_strategy_template`; the guide requires Strategy management rights. Saving additionally needs `create_strategy`, write consent and appropriate permissions. Missing tools or denied access are limitations, not evidence that no records exist. Retain proposed work and offer the platform when a required action is unavailable.
+
+The [Strategy workflow dependency table](https://github.com/lightbringer-patents/agent-plugin/blob/main/skills/ip-strategy/references/mcp-workflow.md#tool-and-skill-dependencies) covers conditional handoffs to innovation capture, portfolio work and patent preparation. Those skills do not add server capabilities or authorise writes. The MCP registry entry supplies a connection, not installed skills; plugin availability and server tool availability must be checked separately.
 
 **Strategy creation saves a draft.** Use `get_strategy_template` for capture and `get_strategy` before revision-aware edits. Replacements apply directly; conflicts require rereading and reconciliation, and edits intersecting pending review changes can be rejected. Creation and edits require Strategy management rights. Publication is a separate explicit action; multiple Strategies may be published at once. A saved Strategy does not itself import patents, request preparation or execute the actions written in it.
 
