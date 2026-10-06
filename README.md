@@ -78,7 +78,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 | Tool | Type | Purpose |
 |---|---|---|
-| `whoami` | read | Identify the connected user and organisation, with optional country, state and website where available. |
+| `whoami` | read | Identify the connected user and organisation, with optional country, state and website. Where supported, `include_members` also retrieves a bounded roster of fellow members with read consent. |
 | `search` | read | Find accessible innovations, documents and meetings. |
 | `fetch` | read | Retrieve a record, document or meeting snapshot found through search. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
@@ -116,6 +116,16 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. The other tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
+
+General service rules and workflow entry points are available before sign-in.
+Startup identity and activity are optional snapshots: a client can finish
+authorization without receiving another startup message. `whoami` retrieves
+current identity and organisation details when needed; where its advertised schema
+supports `include_members`, read consent also permits a roster of up to 20 fellow
+members' names and roles, with a total count. A failed roster lookup is reported
+separately from an empty roster. `list_innovations` and `list_reviews` retrieve
+current accessible records. Detailed capture guidance comes from the template
+tools, and installed skills provide fuller workflow practices.
 
 **Registration saves a record.** `register_innovation` validates before saving. Validation errors mean nothing was registered; success returns the saved ID/link and any non-blocking warnings. Warnings do not mean registration failed. There is no separate MCP validation tool. Incomplete ideas that cannot satisfy the schema should remain explicitly pending registration rather than being filled with invented details.
 
