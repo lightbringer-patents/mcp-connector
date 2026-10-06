@@ -1,6 +1,6 @@
 # Lightbringer patent service through MCP
 
-Work with [Lightbringer's patent service](https://lightbringer.com) from your AI assistant, where you research and build technical solutions. Register and enrich innovations, request patent preparation, and collaborate with the Lightbringer team on reports and patent drafts.
+Work with [Lightbringer's patent service](https://lightbringer.com) from your AI assistant, where you research and build technical solutions. Register and enrich innovations, request patent preparation, and collaborate with the Lightbringer team on Strategies, reports and patent drafts.
 
 Lightbringer offers a full patent service with qualified patent attorneys on its team. Professional engagements include attorney advice, strategy assessment, novelty searches, freedom-to-operate (FTO) assessments, patent drafting, filing and prosecution. Lightbringer is the route to that professional work; automated analysis of an innovation description is not an attorney review, novelty search or FTO assessment.
 
@@ -9,7 +9,7 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Retrieve accessible innovations, patents, strategy reports and meeting notes or transcripts to guide your work. Trade-secret classification is not exposed through the current tools.
+- **Use existing context.** Retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts to guide your work. Trade-secret classification is not exposed through the current tools.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
@@ -78,7 +78,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 | Tool | Type | Purpose |
 |---|---|---|
-| `whoami` | read | Identify the connected user and organisation. |
+| `whoami` | read | Identify the connected user and organisation, with optional country, state and website. Where supported, `include_members` also retrieves a bounded roster of fellow members with read consent. |
 | `search` | read | Find accessible innovations, documents and meetings. |
 | `fetch` | read | Retrieve a record, document or meeting snapshot found through search. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
@@ -92,7 +92,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `set_strategy_publication` | write | Publish a Strategy or return it to draft when explicitly requested. |
 | `delete_strategy` | write | Permanently delete a selected Strategy when explicitly requested. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
-| `list_reviews` | read | Locate report and patent-draft reviews. |
+| `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
 | `get_review` | read | Read review documents, comments and discussion. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
@@ -111,17 +111,31 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ¹ Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
 
-² Available under read consent when developer feedback is enabled. Sends tool feedback to the Lightbringer engineering team.
+² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`. `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. The other tools advertise `openWorldHint: false`. Preparation and review actions can still send email or in-app notifications, and developer feedback is sent to Lightbringer's engineering team. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
+
+`search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
+
+General service rules and workflow entry points are available before sign-in.
+Startup identity and activity are optional snapshots: a client can finish
+authorization without receiving another startup message. `whoami` retrieves
+current identity and organisation details when needed; where its advertised schema
+supports `include_members`, read consent also permits a roster of up to 20 fellow
+members' names and roles, with a total count. A failed roster lookup is reported
+separately from an empty roster. `list_innovations` and `list_reviews` retrieve
+current accessible records. Detailed capture guidance comes from the template
+tools, and installed skills provide fuller workflow practices.
 
 **Registration saves a record.** `register_innovation` validates before saving. Validation errors mean nothing was registered; success returns the saved ID/link and any non-blocking warnings. Warnings do not mean registration failed. There is no separate MCP validation tool. Incomplete ideas that cannot satisfy the schema should remain explicitly pending registration rather than being filled with invented details.
 
 **Automated feedback returns a task.** `start_innovation_feedback` returns one `task_id` for the complete feedback run, plus `status`, `progress` and per-analysis `results`. Use that same ID with `get_task_status`. Continue while `queued` or `running`; stop at `succeeded`, `partially_succeeded` or `failed`. Report successful findings alongside individual failures. The initial call returns after dispatch by default; ending a wait does not cancel the analysis.
 
-**Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
+**Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. A new request sends email to the assigned specialist and submitter, with the organisation's primary contact copied when applicable. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
+
+**Reviews distinguish Strategies, reports and documents.** `list_reviews` includes reviews where you are a participant or creator, with available Strategy, report, case and connected-innovation references. Preserve the returned `target` (`strategy`, `report` or `document`) when identifying the reviewed artifact. Read the selected review before posting authorised feedback. `respond_to_review` accepts an optional message of up to 2,000 characters and sends notification email; approval cannot be withdrawn through this tool.
 
 **Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
 
@@ -129,9 +143,13 @@ The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_stra
 
 A per-record `family.refresh` assessment checks stored references without changing records. Known `missing_links` can justify an authorised refresh; unresolved references require investigation. Unknown data or old/null timestamps alone do not justify refresh. Review-only requests do not authorise writes. After authorised updates, fetch affected records again to verify the resulting family; if family data is absent, report that limit. See the [portfolio skill](https://github.com/lightbringer-patents/agent-plugin/tree/main/skills/patent-portfolio) for workflow details.
 
+**Strategy dependencies follow the connected tools.** Start from organisation context and relevant saved records. `whoami` can supply missing organisation context; country, state and website are optional and may be absent on older connections. They do not classify the company or determine its first-filing office. Use relevant application-region metadata and the user's plans for filing context. Strategy capture depends on `list_strategies`, relevant `get_strategy` reads and `get_strategy_template`; the guide requires Strategy management rights. Saving additionally needs `create_strategy`, write consent and appropriate permissions. Missing tools or denied access are limitations, not evidence that no records exist. Retain proposed work and offer the platform when a required action is unavailable.
+
+The [Strategy workflow guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/skills/ip-strategy/references/mcp-workflow.md) covers Strategy reads and writes and separate requests for innovation capture, portfolio work and patent preparation. Those skills do not add server capabilities or authorise writes. The MCP registry entry supplies a connection, not installed skills; plugin availability and server tool availability must be checked separately.
+
 **Strategy creation saves a draft.** Use `get_strategy_template` for capture and `get_strategy` before revision-aware edits. Replacements apply directly; conflicts require rereading and reconciliation, and edits intersecting pending review changes can be rejected. Creation and edits require Strategy management rights. Publication is a separate explicit action; multiple Strategies may be published at once. A saved Strategy does not itself import patents, request preparation or execute the actions written in it.
 
-The five user-invoked MCP prompts are `draft-invention-disclosure`, `draft-strategy`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are server-provided starting templates; the plugin skills provide fuller workflow guidance.
+The five user-invoked MCP prompts are `draft-invention-disclosure`, `draft-strategy`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are optional task starters, not prerequisites for using tools. Capture prompt titles make their intent to save explicit. Startup instructions supply service-wide rules, tool descriptions define operation contracts, live capture guides own authoring procedures and schemas, and installed skills coordinate the wider workflow. Reading or making a targeted update to a saved Strategy does not require the capture guide.
 
 Tasks and findings expire 30 days after creation; reading does not consume them or extend retention. Use `list_tasks`, optionally filtered by `invention_id`, to recover a lost task ID in the connected organisation. Follow `next_cursor` even if access filtering returns an empty page; listing reports recorded status without polling. `delete_task` permanently removes the user’s task and findings when requested, in any execution state, with write consent. Deletion does not cancel the analysis, delete the innovation or withdraw a service request.
 
