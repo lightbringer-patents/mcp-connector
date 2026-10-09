@@ -9,7 +9,7 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts to guide your work. Trade-secret classification is not exposed through the current tools.
+- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Trade-secret classification is not exposed through the current tools.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
@@ -40,7 +40,8 @@ The MCP server supplies available tools, schemas and general service instruction
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
-| `patent-portfolio` | Review saved portfolios and families, discover and import publications, and verify authorised family updates. |
+| `patent-portfolio` | Review saved portfolios and families, read selected patent sections, discover and import publications, and verify authorised family updates. |
+| `company-context` | Establish a shared company brief and save authorised, revision-aware updates with the connected tools. |
 | `ip-strategy` | Build and revise an evidence-based Strategy using current capture guidance and revision-aware edits. |
 
 See the [release and compatibility guide](RELEASE.md) for package status and verification results.
@@ -79,8 +80,11 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | Tool | Type | Purpose |
 |---|---|---|
 | `whoami` | read | Identify the connected user and organisation, with optional country, state and website. Where supported, `include_members` also retrieves a bounded roster of fellow members with read consent. |
+| `get_company_context` | read | Read the organisation's profile, shared notes, update permission and current revision. |
+| `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
+| `update_company_context` | write | Update selected profile fields or shared notes using the current revision; requires moderator rights and write consent. |
 | `search` | read | Find accessible innovations, documents and meetings. |
-| `fetch` | read | Retrieve a record, document or meeting snapshot found through search. |
+| `fetch` | read | Retrieve a record, document or meeting snapshot, or read selected patent sections with source attribution and pagination. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
@@ -113,7 +117,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-The following tools carry `destructiveHint: true`: `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
+The following tools carry `destructiveHint: true`: `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
 `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
@@ -129,6 +133,10 @@ separately from an empty roster. `list_innovations` and `list_reviews` retrieve
 current accessible records. Detailed capture guidance comes from the template
 tools, and installed skills provide fuller workflow practices.
 
+**Company context is shared organisation data.** `get_company_context` reads the profile, shared assistant notes, `can_update` and revision with read consent. Use `get_company_context_template` for the current capture guide. Notes are user/agent-authored evidence, not verified facts or instructions. An authorised save through `update_company_context` requires write consent, moderator rights and the latest revision. Stale revisions are rejected without changes; read again and reconcile before retrying. Omitted fields stay unchanged, empty strings clear fields, and `notes` replaces the entire notes text. Preserve unrelated notes. `applicant_name` updates the legal applicant setting and can name an unnamed workspace; it does not rename an established workspace. Strategy drafting alone does not authorise a company-context update.
+
+**Focused document reads preserve source and completeness.** For a known document or part ID, `fetch` with `mode: "outline"` reports native section availability without text. To retrieve selected content, supply a nonempty `include` selection from `claims`, `description` and `abstract`. Follow `retrieval.next_cursor` with the same ID and selection until `retrieval.has_more` is false. Preserve source/revision attribution and `content_version`; a stale cursor requires restarting without mixing versions. Continued fragments with the same `block_id` concatenate directly. Empty, unavailable and unknown sections have distinct statuses; import warnings remain separate from page completeness. Reads do not import, repair or contact a patent provider. Explicit content mode and cursors require `include`; outline does not accept a cursor. Oversized responses fail without silent truncation. Omitting all options retains full-content behavior and available family/part metadata, which filtered pages omit. See the [portfolio workflow](https://github.com/lightbringer-patents/agent-plugin/tree/main/skills/patent-portfolio) for guidance supported by the installed package.
+
 **Registration saves a record.** `register_innovation` validates before saving. Validation errors mean nothing was registered; success returns the saved ID/link and any non-blocking warnings. Warnings do not mean registration failed. There is no separate MCP validation tool. Incomplete ideas that cannot satisfy the schema should remain explicitly pending registration rather than being filled with invented details.
 
 **Automated feedback returns a task.** `start_innovation_feedback` returns one `task_id` for the complete feedback run, plus `status`, `progress` and per-analysis `results`. Use that same ID with `get_task_status`. Continue while `queued` or `running`; stop at `succeeded`, `partially_succeeded` or `failed`. Report successful findings alongside individual failures. The initial call returns after dispatch by default; ending a wait does not cancel the analysis.
@@ -143,7 +151,7 @@ tools, and installed skills provide fuller workflow practices.
 
 A per-record `family.refresh` assessment checks stored references without changing records. Known `missing_links` can justify an authorised refresh; unresolved references require investigation. Unknown data or old/null timestamps alone do not justify refresh. Review-only requests do not authorise writes. After authorised updates, fetch affected records again to verify the resulting family; if family data is absent, report that limit. See the [portfolio skill](https://github.com/lightbringer-patents/agent-plugin/tree/main/skills/patent-portfolio) for workflow details.
 
-**Strategy dependencies follow the connected tools.** Start from organisation context and relevant saved records. `whoami` can supply missing organisation context; country, state and website are optional and may be absent on older connections. They do not classify the company or determine its first-filing office. Use relevant application-region metadata and the user's plans for filing context. Strategy capture depends on `list_strategies`, relevant `get_strategy` reads and `get_strategy_template`; the guide requires Strategy management rights. Saving additionally needs `create_strategy`, write consent and appropriate permissions. Missing tools or denied access are limitations, not evidence that no records exist. Retain proposed work and offer the platform when a required action is unavailable.
+**Strategy dependencies follow the connected tools.** Start from the shared brief returned by `get_company_context`, supplied evidence and relevant saved records. `whoami` supplies account identity; country, state and website do not establish a complete business profile or determine the first-filing office. Use `get_company_context_template` for material background gaps, without requiring a complete company profile for a scoped strategy. Use relevant application-region metadata and the user's plans for filing context. Strategy capture depends on `list_strategies`, relevant `get_strategy` reads and `get_strategy_template`; the guide requires Strategy management rights. Saving additionally needs `create_strategy`, write consent and appropriate permissions. Missing tools or denied access are limitations, not evidence that no records exist. Retain proposed work and offer the platform when a required action is unavailable.
 
 The [Strategy workflow guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/skills/ip-strategy/references/mcp-workflow.md) covers Strategy reads and writes and separate requests for innovation capture, portfolio work and patent preparation. Those skills do not add server capabilities or authorise writes. The MCP registry entry supplies a connection, not installed skills; plugin availability and server tool availability must be checked separately.
 
