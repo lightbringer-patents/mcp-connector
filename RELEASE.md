@@ -6,6 +6,15 @@ The connector metadata in `server.json` matches live service version 4.18.3. Pub
 
 ## Service 4.18.3 compatibility
 
+Authenticated acceptance passed in a connected Codex session on 2026-10-22.
+Separate shared-asset and compatibility-interface cases each created a synthetic
+draft containing normal paragraphs, multiline Markdown and Unicode, read back
+the exact section content, and applied revision-checked updates. Both rejected
+a stale revision with 409 without changing the saved state. Both disposable
+records were deleted and subsequent reads returned 404. No Strategy was
+published and no patent service was requested. This verifies these calls in that
+session; Claude execution, package installation and publication remain separate.
+
 - Express the populated-section requirement for `create_asset` and `create_strategy` as a whole-string pattern that remains equivalent under standard JSON Schema validation. Paragraphs, multiline Markdown and Unicode text remain valid; blank sections remain invalid. The content limit and saved text are unchanged.
 - Keep both creation interfaces, their permissions and their results. No endpoint or OAuth changes are required.
 - Before publication, refresh the host's tool definitions and verify creation with populated multiline sections through each supported host. A successful tool scan alone does not establish successful execution. A rejected request must not be retried through the other creation interface as a workaround.
