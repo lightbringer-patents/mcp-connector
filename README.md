@@ -83,12 +83,15 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_company_context` | read | Read the organisation's profile, shared notes, update permission and current revision. |
 | `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
 | `update_company_context` | write | Update selected profile fields or shared notes using the current revision; requires moderator rights and write consent. |
-| `search` | read | Find accessible innovations, documents and meetings. |
-| `fetch` | read | Retrieve a record, document or meeting snapshot, or read selected patent sections with source attribution and pagination. |
+| `search` | read | Find accessible innovations, documents, Strategies and meetings. |
+| `fetch` | read | Retrieve accessible content, opt into complete Strategy asset state with `include_asset: true`, or read selected patent sections with pagination. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
+| `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
+| `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
+| `delete_asset` | write | Permanently delete a resolved Strategy when explicitly requested. |
 | `list_strategies` | read | List accessible Strategies and their publication status. |
 | `get_strategy` | read | Read Strategy sections and the current edit revision. |
 | `create_strategy` | write | Save a populated draft Strategy. |
@@ -117,11 +120,18 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-The following tools carry `destructiveHint: true`: `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
+The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
 `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
+
+For Strategies, prefer shared asset writes with the required `search` and opt-in
+`fetch` schemas when advertised. `create_strategy`, `edit_strategy`,
+`delete_strategy`, `list_strategies` and `get_strategy` remain deprecated
+compatibility interfaces for the same records. `get_strategy_template` and
+`set_strategy_publication` remain supported. Choose the available path before a
+write; do not replay a failed or uncertain write through another interface.
 
 General service rules and workflow entry points are available before sign-in.
 Startup identity and activity are optional snapshots: a client can finish

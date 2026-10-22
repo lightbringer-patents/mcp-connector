@@ -1,8 +1,31 @@
 # Connector release and compatibility
 
-Public discovery on 2026-10-16 returned service version 4.17.0, 33 tools and five prompts, including the three company-context tools. The catalog includes 15 read-only tools and nine tools with `openWorldHint: true`. The `fetch` description explicitly requires continuing selected sections until `retrieval.has_more` is false, and `search_public_patents` allows a null assignee when unknown. These observations verify anonymous discovery only; authenticated results, permissions and host installation remain separate acceptance checks.
+Public discovery on 2026-10-22 returned service version 4.18.3, 36 tools and five prompts, including the three shared Strategy asset operations. Both creation schemas advertise the updated populated-section pattern. The catalog includes 15 read-only tools and nine tools with `openWorldHint: true`. These observations verify anonymous discovery only; authenticated results, permissions and host installation remain separate acceptance checks.
 
-The connector metadata in `server.json` is published at version 4.17.0 in the MCP registry. Its `version` must equal the `serverInfo.version` the service reports. The registry schema defines `version` as the equivalent of the MCP `Implementation.version`, so a service release that changes the reported version is followed by a matching `server.json` update and registry publication. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; consult their manifests and release notes for package versions. Updating these repositories does not publish an MCP registry entry or establish host-directory availability.
+The connector metadata in `server.json` matches live service version 4.18.3. Publish this metadata only after the affected authenticated workflows pass. Registry publication is a separate step; the previously verified registry version is 4.17.0. The metadata version must equal the service's `serverInfo.version`. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; a repository merge does not establish registry or host-directory publication.
+
+## Service 4.18.3 compatibility
+
+Authenticated acceptance passed in a connected Codex session on 2026-10-22.
+Separate shared-asset and compatibility-interface cases each created a synthetic
+draft containing normal paragraphs, multiline Markdown and Unicode, read back
+the exact section content, and applied revision-checked updates. Both rejected
+a stale revision with 409 without changing the saved state. Both disposable
+records were deleted and subsequent reads returned 404. No Strategy was
+published and no patent service was requested. This verifies these calls in that
+session; Claude execution, package installation and publication remain separate.
+
+- Express the populated-section requirement for `create_asset` and `create_strategy` as a whole-string pattern that remains equivalent under standard JSON Schema validation. Paragraphs, multiline Markdown and Unicode text remain valid; blank sections remain invalid. The content limit and saved text are unchanged.
+- Keep both creation interfaces, their permissions and their results. No endpoint or OAuth changes are required.
+- Before publication, refresh the host's tool definitions and verify creation with populated multiline sections through each supported host. A successful tool scan alone does not establish successful execution. A rejected request must not be retried through the other creation interface as a workaround.
+- This compatible tool-schema update does not itself require a plugin package version bump. The prepared portable 5.3.0 and Claude 1.6.0 skill updates remain separate releases.
+
+## Service 4.18.1 compatibility
+
+- `create_asset`, `update_asset` and `delete_asset` support Strategies alongside the existing Strategy tools. Writes require write consent and the applicable record permissions. Both interfaces address the same records; publication remains a separate explicit action.
+- `search` supports Strategy discovery. When advertised, `fetch` with `include_asset: true` returns complete structured Strategy state and its revision. Ordinary fetch responses preserve their existing content shape; asset edits require the complete opt-in state.
+- The five superseded Strategy CRUD and discovery tools remain available for compatibility. `get_strategy_template` and `set_strategy_publication` remain supported. Select a usable interface before writing; errors and uncertain outcomes do not authorise replaying the write through another interface.
+- Portable 5.3.0 and Claude 1.6.0 are prepared separately with capability-aware guidance. Tool review, authenticated host checks and package publication are independent outcomes. The endpoint and OAuth configuration are unchanged.
 
 ## Service 4.17.0 compatibility
 
