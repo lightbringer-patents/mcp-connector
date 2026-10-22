@@ -1,8 +1,15 @@
 # Connector release and compatibility
 
-Public discovery on 2026-10-21 returned service version 4.18.1, 36 tools and five prompts, including the three shared Strategy asset operations. The catalog includes 15 read-only tools and nine tools with `openWorldHint: true`. These observations verify anonymous discovery only; authenticated results, permissions and host installation remain separate acceptance checks.
+Public discovery on 2026-10-22 returned service version 4.18.2, 36 tools and five prompts, including the three shared Strategy asset operations. The catalog includes 15 read-only tools and nine tools with `openWorldHint: true`. These observations verify anonymous discovery only; authenticated results, permissions and host installation remain separate acceptance checks.
 
-The connector metadata in `server.json` targets service version 4.18.1. Registry publication is a separate step; the previously verified registry version is 4.17.0. The metadata version must equal the service's `serverInfo.version`. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; a repository merge does not establish registry or host-directory publication.
+The connector metadata in `server.json` is prepared for service version 4.18.3, which has not yet been verified live. Publish this metadata only after the service reports that exact version and the affected authenticated workflows pass. Registry publication is a separate step; the previously verified registry version is 4.17.0. The metadata version must equal the service's `serverInfo.version`. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; a repository merge does not establish registry or host-directory publication.
+
+## Prepared service 4.18.3 compatibility
+
+- Express the populated-section requirement for `create_asset` and `create_strategy` as a whole-string pattern that remains equivalent under standard JSON Schema validation. Paragraphs, multiline Markdown and Unicode text remain valid; blank sections remain invalid. The content limit and saved text are unchanged.
+- Keep both creation interfaces, their permissions and their results. No endpoint or OAuth changes are required.
+- Before publication, refresh the host's tool definitions and verify creation with populated multiline sections through each supported host. A successful tool scan alone does not establish successful execution. A rejected request must not be retried through the other creation interface as a workaround.
+- This compatible tool-schema update does not itself require a plugin package version bump. The prepared portable 5.3.0 and Claude 1.6.0 skill updates remain separate releases.
 
 ## Service 4.18.1 compatibility
 
