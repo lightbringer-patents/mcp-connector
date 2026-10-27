@@ -42,13 +42,18 @@ The MCP server supplies available tools, schemas and general service instruction
 | `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
 | `patent-portfolio` | Review saved portfolios and families, read selected patent sections, discover and import publications, and verify authorised family updates. |
 | `company-context` | Establish a shared company brief and save authorised, revision-aware updates with the connected tools. |
+| `setup` | Get oriented from your current IP situation and develop a practical first plan, saved as a draft Strategy when requested. |
 | `ip-strategy` | Build and revise an evidence-based Strategy using current capture guidance and revision-aware edits. |
 
 See the [release and compatibility guide](RELEASE.md) for package status and verification results.
 
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
-After connecting and installing the matching skills, try:
+After connecting, try:
+
+> Help me get started with Lightbringer and work out our next steps.
+
+The setup skill, when installed, adapts to your situation without requiring patent expertise. A specific task can go directly to its workflow. With the innovation-capture skill, you can also ask:
 
 > Use Lightbringer's innovation-capture skill to identify potential innovations in the technical work we have discussed. Search for existing records, register new innovations and enrich relevant existing ones using supported facts. Preserve open questions and report anything that could not be saved. Do not request patent preparation; registration is the goal for now.
 
