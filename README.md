@@ -9,7 +9,7 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, a connection granted the optional trade secret register permission can list the register entries you can open by reference, title, status and dates, without entry content.
+- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, list the trade secret register entries you can open by reference, title, status and dates, without entry content.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
@@ -27,11 +27,11 @@ Use a compatible MCP client such as ChatGPT, Claude, Claude Code or Cursor. Supp
 | Endpoint | `https://mcp.lightbringer.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 (Authorization Code + PKCE, S256), with Dynamic Client Registration |
-| Scopes | `mcp:read`, `mcp:write`; optional `mcp:trade-secrets` |
+| Scopes | `mcp:read`, `mcp:write`, `mcp:trade-secrets` |
 
 The server advertises its authorization server through RFC 9728 protected-resource metadata at `/.well-known/oauth-protected-resource`. Complete the host's sign-in flow and select the Lightbringer organisation to connect. Access is limited to that organisation and your existing permissions. Eligible users can enable MCP for an organisation during consent; other members can connect when MCP is already enabled. Follow the account or organisation remedy shown if connection is blocked. Never paste passwords or access tokens into chat.
 
-`mcp:trade-secrets` is never granted by default. A client must request it, and you approve it separately during sign-in; `mcp:read` alone does not include it.
+`mcp:trade-secrets` allows listing the trade secret register; `mcp:read` alone does not include it. Clients that request every supported scope ask for it at sign-in, where it appears as its own permission. Connections made before it was available do not include it; remove the Lightbringer connection and add it again to grant it.
 
 ### Install the skills with the connector
 
@@ -123,7 +123,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-³ Requires the optional `mcp:trade-secrets` scope and is available only where the organisation allows listing its trade secret register in AI assistants.
+³ Requires the `mcp:trade-secrets` scope and is available only where the organisation allows listing its trade secret register in AI assistants.
 
 The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
