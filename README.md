@@ -31,7 +31,7 @@ Use a compatible MCP client such as ChatGPT, Claude, Claude Code or Cursor. Supp
 
 The server advertises its authorization server through RFC 9728 protected-resource metadata at `/.well-known/oauth-protected-resource`. Complete the host's sign-in flow and select the Lightbringer organisation to connect. Access is limited to that organisation and your existing permissions. Eligible users can enable MCP for an organisation during consent; other members can connect when MCP is already enabled. Follow the account or organisation remedy shown if connection is blocked. Never paste passwords or access tokens into chat.
 
-`mcp:trade-secrets` allows listing the trade secret register; `mcp:read` alone does not include it. Clients that request every supported scope ask for it at sign-in, where it appears as its own permission. Connections made before it was available do not include it; remove the Lightbringer connection and add it again to grant it.
+`mcp:trade-secrets` allows listing the trade secret register; `mcp:read` alone does not include it. Clients that request every supported scope ask for it at sign-in. The sign-in screen lists it on its own line, and approving the sign-in grants all requested permissions together. Connections made before it was available may not include it. Some clients ask you to sign in again when a tool needs it; otherwise remove the Lightbringer connection and add it again.
 
 ### Install the skills with the connector
 
@@ -90,7 +90,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
-| `list_trade_secrets` | read³ | List the trade secret register entries you can open by reference, title, status and dates, without entry content. |
+| `list_trade_secrets` | read¹ | List the trade secret register entries you can open by reference, title, status and dates, without entry content. |
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
 | `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
 | `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
@@ -111,19 +111,19 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `refresh_patent_family` | write | Update family grouping among saved own patents. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
-| `start_innovation_feedback` | write¹ | Dispatch automated description analysis and return a task. |
-| `get_task_status` | write¹ | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
+| `start_innovation_feedback` | write² | Dispatch automated description analysis and return a task. |
+| `get_task_status` | write² | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
 | `add_comment` | write | Add a comment anchored to a review document passage. |
 | `reply_to_comment` | write | Reply to an existing comment thread. |
 | `add_discussion_comment` | write | Add a general review discussion comment. |
-| `send_developer_feedback` | write² | Report tool problems or missing capabilities to Lightbringer. |
+| `send_developer_feedback` | write³ | Report tool problems or missing capabilities to Lightbringer. |
 
-¹ Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
+¹ Requires the `mcp:trade-secrets` scope and is available only where the organisation allows listing its trade secret register in AI assistants.
 
-² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
+² Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
 
-³ Requires the `mcp:trade-secrets` scope and is available only where the organisation allows listing its trade secret register in AI assistants.
+³ Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
 The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
@@ -172,7 +172,7 @@ The [Strategy workflow guide](https://github.com/lightbringer-patents/agent-plug
 
 **Strategy creation saves a draft.** Use `get_strategy_template` for capture and `get_strategy` before revision-aware edits. Replacements apply directly; conflicts require rereading and reconciliation, and edits intersecting pending review changes can be rejected. Creation and edits require Strategy management rights. Publication is a separate explicit action; multiple Strategies may be published at once. A saved Strategy does not itself import patents, request preparation or execute the actions written in it.
 
-**The trade secret register lists index rows only.** `list_trade_secrets` returns up to 25 entries per page, each with a reference such as `TS-0001`, a non-revealing title, a status and its date, and when the entry was marked. A null status means not assessed, not that the entry is secret. Follow `nextCursor` until it is null. Which entries appear follows your register access in Lightbringer, so references can have gaps, and an empty list means there is nothing you can open. Descriptions, frozen content, attachments, owners, access grants and history are never returned. If the organisation does not use the register or has not enabled listing it in AI assistants, the tool reports that no register is available. A missing entry is not evidence that no trade secret exists.
+**The trade secret register lists index rows only.** `list_trade_secrets` returns up to 25 entries per page, each with a reference such as `TS-0001`, a title chosen not to reveal the secret (or none), a status and its date, and when the entry was registered. A null status means not assessed, not that the entry is secret. Follow `nextCursor` until it is null. Moderators list every registered entry; other members list the entries they hold an access grant to. References can therefore have gaps, and an empty list means there is nothing you can open. Descriptions, frozen content, attachments, owners, access grants and history are never returned. If the organisation does not have the register, the tool says so and that it can be added by contacting Lightbringer. If listing is otherwise unavailable, for example because the organisation has not allowed listing its register in AI assistants, the tool reports that no register is available. A missing entry is not evidence that no trade secret exists.
 
 The five user-invoked MCP prompts are `draft-invention-disclosure`, `draft-strategy`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are optional task starters, not prerequisites for using tools. Capture prompt titles make their intent to save explicit. Startup instructions supply service-wide rules, tool descriptions define operation contracts, live capture guides own authoring procedures and schemas, and installed skills coordinate the wider workflow. Reading or making a targeted update to a saved Strategy does not require the capture guide.
 
