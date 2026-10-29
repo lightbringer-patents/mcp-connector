@@ -7,19 +7,23 @@
     "url": "https://github.com/lightbringer-patents/mcp-connector",
     "source": "github"
   },
-  "version": "4.18.3",
+  "version": "4.21.1",
   "websiteUrl": "https://lightbringer.com",
   "icons": [
     {
       "src": "https://raw.githubusercontent.com/lightbringer-patents/mcp-connector/main/logo-square-dark.png",
       "mimeType": "image/png",
-      "sizes": ["1024x1024"],
+      "sizes": [
+        "1024x1024"
+      ],
       "theme": "dark"
     },
     {
       "src": "https://raw.githubusercontent.com/lightbringer-patents/mcp-connector/main/logo-square-light.png",
       "mimeType": "image/png",
-      "sizes": ["1024x1024"],
+      "sizes": [
+        "1024x1024"
+      ],
       "theme": "light"
     }
   ],

@@ -9,7 +9,7 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 ## What you can do
 
 - **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Trade-secret classification is not exposed through the current tools.
+- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, list the trade secret register entries you can open by reference, title, status and dates, without entry content.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
@@ -27,9 +27,11 @@ Use a compatible MCP client such as ChatGPT, Claude, Claude Code or Cursor. Supp
 | Endpoint | `https://mcp.lightbringer.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 (Authorization Code + PKCE, S256), with Dynamic Client Registration |
-| Scopes | `mcp:read`, `mcp:write` |
+| Scopes | `mcp:read`, `mcp:write`, `mcp:trade-secrets` |
 
 The server advertises its authorization server through RFC 9728 protected-resource metadata at `/.well-known/oauth-protected-resource`. Complete the host's sign-in flow and select the Lightbringer organisation to connect. Access is limited to that organisation and your existing permissions. Eligible users can enable MCP for an organisation during consent; other members can connect when MCP is already enabled. Follow the account or organisation remedy shown if connection is blocked. Never paste passwords or access tokens into chat.
+
+`mcp:trade-secrets` allows listing the trade secret register; `mcp:read` alone does not include it. Clients that request every supported scope ask for it at sign-in. The sign-in screen lists it on its own line, and approving the sign-in grants all requested permissions together. Connections made before it was available may not include it. Some clients ask you to sign in again when a tool needs it; otherwise remove the Lightbringer connection and add it again.
 
 ### Install the skills with the connector
 
@@ -39,16 +41,23 @@ The MCP server supplies available tools, schemas and general service instruction
 |---|---|
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
-| `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
+| `lightbringer-navigation` | Choose a relevant next step and explain the patent process or platform/team continuation. |
+| `novelty-exploration` | Explore related public patent disclosures and save selected references when authorised. |
+| `trade-secrets` | Explain trade secrets and list accessible register index rows when the scope and organisation permit it. |
 | `patent-portfolio` | Review saved portfolios and families, read selected patent sections, discover and import publications, and verify authorised family updates. |
 | `company-context` | Establish a shared company brief and save authorised, revision-aware updates with the connected tools. |
+| `setup` | Get oriented from your current IP situation and develop a practical first plan, saved as a draft Strategy when requested. |
 | `ip-strategy` | Build and revise an evidence-based Strategy using current capture guidance and revision-aware edits. |
 
 See the [release and compatibility guide](RELEASE.md) for package status and verification results.
 
 [agent-plugin](https://github.com/lightbringer-patents/agent-plugin) is the canonical skills package. [claude-plugin](https://github.com/lightbringer-patents/claude-plugin) mirrors its complete skills tree with Claude-specific metadata. These are separate distribution packages for the same service. See the [distribution guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/DISTRIBUTION.md) for supported installation routes, release dependencies and host verification. A repository or registry listing does not itself establish approval or availability in a host's plugin directory.
 
-After connecting and installing the matching skills, try:
+After connecting, try:
+
+> Help me get started with Lightbringer and work out our next steps.
+
+The setup skill, when installed, adapts to your situation without requiring patent expertise. A specific task can go directly to its workflow. With the innovation-capture skill, you can also ask:
 
 > Use Lightbringer's innovation-capture skill to identify potential innovations in the technical work we have discussed. Search for existing records, register new innovations and enrich relevant existing ones using supported facts. Preserve open questions and report anything that could not be saved. Do not request patent preparation; registration is the goal for now.
 
@@ -88,6 +97,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `get_innovation` | read | Read an innovation's current content. |
+| `list_trade_secrets` | read¹ | List the trade secret register entries you can open by reference, title, status and dates, without entry content. |
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
 | `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
 | `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
@@ -100,7 +110,8 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `delete_strategy` | write | Permanently delete a selected Strategy when explicitly requested. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
 | `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
-| `get_review` | read | Read review documents, comments and discussion. |
+| `get_review` | read | Read review documents, comments, discussion and available validation-country choices. |
+| `set_validation_countries` | write | Replace the country selection on an open validation review; earlier approvals return to pending. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
@@ -108,17 +119,19 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `refresh_patent_family` | write | Update family grouping among saved own patents. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
-| `start_innovation_feedback` | write¹ | Dispatch automated description analysis and return a task. |
-| `get_task_status` | write¹ | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
+| `start_innovation_feedback` | write² | Dispatch automated description analysis and return a task. |
+| `get_task_status` | write² | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
 | `add_comment` | write | Add a comment anchored to a review document passage. |
 | `reply_to_comment` | write | Reply to an existing comment thread. |
 | `add_discussion_comment` | write | Add a general review discussion comment. |
-| `send_developer_feedback` | write² | Report tool problems or missing capabilities to Lightbringer. |
+| `send_developer_feedback` | write³ | Report tool problems or missing capabilities to Lightbringer. |
 
-¹ Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
+¹ Requires the `mcp:trade-secrets` scope and is available only where the organisation allows listing its trade secret register in AI assistants.
 
-² Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
+² Both tools are available under read consent and annotated non-read-only: `start_innovation_feedback` dispatches background analysis; `get_task_status` refreshes active analyses and saves their status and available findings. Neither edits the innovation description.
+
+³ Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
 The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
@@ -153,6 +166,10 @@ tools, and installed skills provide fuller workflow practices.
 
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. A new request sends email to the assigned specialist and submitter, with the organisation's primary contact copied when applicable. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
 
+**Innovation edits return section receipts.** Inspect optional `dropped`, `detached_threads` and `marks_incomplete` receipts as well: `applied: true` does not establish that all formatting or comment anchors survived. Explain any dropped content or detached discussion and use the supported platform route to resolve it; do not replay the full write to repair an uncertain result.
+
+**Validation-country selection is separate from approval.** Read `get_review` first. `set_validation_countries` replaces the whole selection using two-letter EPC state codes or `UP` for the Unitary Patent; changing it returns earlier approvals to pending. Only an eligible reviewer or specialist can change an open review. The selected countries do not establish completed validation; approval uses `respond_to_review` separately.
+
 **Reviews distinguish Strategies, reports and documents.** `list_reviews` includes reviews where you are a participant or creator, with available Strategy, report, case and connected-innovation references. Preserve the returned `target` (`strategy`, `report` or `document`) when identifying the reviewed artifact. Read the selected review before posting authorised feedback. `respond_to_review` accepts an optional message of up to 2,000 characters and sends notification email; approval cannot be withdrawn through this tool.
 
 **Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
@@ -166,6 +183,8 @@ A per-record `family.refresh` assessment checks stored references without changi
 The [Strategy workflow guide](https://github.com/lightbringer-patents/agent-plugin/blob/main/skills/ip-strategy/references/mcp-workflow.md) covers Strategy reads and writes and separate requests for innovation capture, portfolio work and patent preparation. Those skills do not add server capabilities or authorise writes. The MCP registry entry supplies a connection, not installed skills; plugin availability and server tool availability must be checked separately.
 
 **Strategy creation saves a draft.** Use `get_strategy_template` for capture and `get_strategy` before revision-aware edits. Replacements apply directly; conflicts require rereading and reconciliation, and edits intersecting pending review changes can be rejected. Creation and edits require Strategy management rights. Publication is a separate explicit action; multiple Strategies may be published at once. A saved Strategy does not itself import patents, request preparation or execute the actions written in it.
+
+**The trade secret register lists index rows only.** `list_trade_secrets` returns up to 25 entries per page, each with a reference such as `TS-0001`, a title chosen not to reveal the secret (or none), a status and its date, and when the entry was registered. A null status means not assessed, not that the entry is secret. Follow `nextCursor` until it is null. Moderators list every registered entry; other members list the entries they hold an access grant to. References can therefore have gaps, and an empty list means there is nothing you can open. Descriptions, frozen content, attachments, owners, access grants and history are never returned. If the organisation does not have the register, the tool says so and that it can be added by contacting Lightbringer. If listing is otherwise unavailable, for example because the organisation has not allowed listing its register in AI assistants, the tool reports that no register is available. A missing entry is not evidence that no trade secret exists.
 
 The five user-invoked MCP prompts are `draft-invention-disclosure`, `draft-strategy`, `start-innovation-feedback`, `request-patent-preparation` and `summarize-my-reviews`. These are optional task starters, not prerequisites for using tools. Capture prompt titles make their intent to save explicit. Startup instructions supply service-wide rules, tool descriptions define operation contracts, live capture guides own authoring procedures and schemas, and installed skills coordinate the wider workflow. Reading or making a targeted update to a saved Strategy does not require the capture guide.
 
