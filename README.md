@@ -41,7 +41,9 @@ The MCP server supplies available tools, schemas and general service instruction
 |---|---|
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
-| `patent-review` | Read review artifacts, prepare sourced feedback, and post authorised comments or review responses. |
+| `lightbringer-navigation` | Choose a relevant next step and explain the patent process or platform/team continuation. |
+| `novelty-exploration` | Explore related public patent disclosures and save selected references when authorised. |
+| `trade-secrets` | Explain trade secrets and list accessible register index rows when the scope and organisation permit it. |
 | `patent-portfolio` | Review saved portfolios and families, read selected patent sections, discover and import publications, and verify authorised family updates. |
 | `company-context` | Establish a shared company brief and save authorised, revision-aware updates with the connected tools. |
 | `setup` | Get oriented from your current IP situation and develop a practical first plan, saved as a draft Strategy when requested. |
@@ -108,7 +110,8 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `delete_strategy` | write | Permanently delete a selected Strategy when explicitly requested. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
 | `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
-| `get_review` | read | Read review documents, comments and discussion. |
+| `get_review` | read | Read review documents, comments, discussion and available validation-country choices. |
+| `set_validation_countries` | write | Replace the country selection on an open validation review; earlier approvals return to pending. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
@@ -162,6 +165,10 @@ tools, and installed skills provide fuller workflow practices.
 **Automated feedback returns a task.** `start_innovation_feedback` returns one `task_id` for the complete feedback run, plus `status`, `progress` and per-analysis `results`. Use that same ID with `get_task_status`. Continue while `queued` or `running`; stop at `succeeded`, `partially_succeeded` or `failed`. Report successful findings alongside individual failures. The initial call returns after dispatch by default; ending a wait does not cancel the analysis.
 
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. A new request sends email to the assigned specialist and submitter, with the organisation's primary contact copied when applicable. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
+
+**Innovation edits return section receipts.** Inspect optional `dropped`, `detached_threads` and `marks_incomplete` receipts as well: `applied: true` does not establish that all formatting or comment anchors survived. Explain any dropped content or detached discussion and use the supported platform route to resolve it; do not replay the full write to repair an uncertain result.
+
+**Validation-country selection is separate from approval.** Read `get_review` first. `set_validation_countries` replaces the whole selection using two-letter EPC state codes or `UP` for the Unitary Patent; changing it returns earlier approvals to pending. Only an eligible reviewer or specialist can change an open review. The selected countries do not establish completed validation; approval uses `respond_to_review` separately.
 
 **Reviews distinguish Strategies, reports and documents.** `list_reviews` includes reviews where you are a participant or creator, with available Strategy, report, case and connected-innovation references. Preserve the returned `target` (`strategy`, `report` or `document`) when identifying the reviewed artifact. Read the selected review before posting authorised feedback. `respond_to_review` accepts an optional message of up to 2,000 characters and sends notification email; approval cannot be withdrawn through this tool.
 

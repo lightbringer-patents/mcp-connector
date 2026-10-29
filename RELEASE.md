@@ -1,8 +1,16 @@
 # Connector release and compatibility
 
-Public discovery on 2026-10-22 returned service version 4.18.3, 36 tools and five prompts, including the three shared Strategy asset operations. Both creation schemas advertise the updated populated-section pattern. The catalog includes 15 read-only tools and nine tools with `openWorldHint: true`. These observations verify anonymous discovery only; authenticated results, permissions and host installation remain separate acceptance checks.
+Public discovery on 2026-10-29 returned service version 4.21.0, 39 tools and five prompts. The connector metadata matches that service version. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Plugin versions are independent of the MCP service version.
 
-The connector metadata in `server.json` matches live service version 4.18.3. Authenticated Strategy acceptance passed, and registry version 4.18.3 was published and independently verified on 2026-10-22. The metadata version must equal the service's `serverInfo.version`. The [portable plugin](https://github.com/lightbringer-patents/agent-plugin) and [Claude plugin](https://github.com/lightbringer-patents/claude-plugin) are versioned separately; a repository merge does not establish registry or host-directory publication.
+## Service 4.21.0 compatibility
+
+- `list_trade_secrets` lists accessible register index rows without entry content, subject to its scope and organisation settings.
+- `get_review` exposes validation-country information; `set_validation_countries` replaces the selection on an eligible open review and returns earlier approvals to pending. Approval remains a separate action.
+- Innovation section updates can return dropped-content and detached-discussion receipts. Clients must inspect these even when a section was applied.
+- `send_developer_feedback` supports problem-focused reports of unresolved customer needs with explicit approval of the exact report and recipient. Delivery does not request professional services or promise a response.
+- Portable 5.4.0 and Claude 1.7.0 combine setup, navigation, preliminary novelty exploration, trade secret guidance and shared unresolved-needs guidance in nine skills. Connected review tools remain available; the standalone review skill is removed.
+
+Registry version 4.18.3 was previously verified on 2026-10-22. Version 4.21.0 publication is pending; a repository merge does not establish registry or host-directory publication.
 
 ## Service 4.18.3 compatibility
 
