@@ -1,6 +1,13 @@
 # Connector release and compatibility
 
-Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. The connector metadata matches that service version. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Plugin versions are independent of the MCP service version.
+Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
+
+## Service 4.22.0 compatibility
+
+- Tool titles are reworded to describe each action in Lightbringer, and tools advertise short in-progress and completed status messages for hosts that display them. Tool names, inputs, effects and permissions are unchanged; annotation hints other than titles are unchanged.
+- `list_tasks`, `get_task_status` and `delete_task` descriptions are clarified: listings are ordered newest first, and `get_task_status` accepts a `task_id` from `start_innovation_feedback` or `list_tasks`. The feedback task contract, 30-day retention and deletion behavior are unchanged. The `get_task_status` output schema adds an optional `type` field that feedback task results do not include. A task response in an unexpected shape is reported as an error instead of being passed on.
+- When Lightbringer does not accept a connection's access, tools ask the user to reconnect and authenticate again.
+- The endpoint and OAuth configuration are unchanged. This release does not require a plugin package update; the existing skills remain compatible with both the previous and the updated tool definitions.
 
 ## Service 4.21.1 compatibility
 
@@ -107,6 +114,7 @@ The renamed tools have no compatibility aliases. Update installed skills and sav
 ## Verification before release
 
 - Discover the deployed tools and annotations with both read and read/write consent. The anonymous catalog observed on 2026-10-16 had 33 tools with developer feedback configured: 15 read-only and 18 non-read-only; without it, expect 32 tools: 15 read-only and 17 non-read-only. `get_task_status` is non-read-only because it persists refreshed status and findings, but remains available under read consent. Nine tools advertise `openWorldHint: true`, as listed in the README. Verify annotations again when tools change. Consent can reduce the visible set further.
+- Verify that each tool's advertised title matches its annotation title, and that hosts displaying tool status messages show the in-progress and completed wording without changing the tool's result or effect.
 - Verify company-context reads with read consent; update-tool absence under read-only consent; moderator checks; stale/current revision handling; complete notes replacement; omitted and empty fields; and applicant-name behavior. Use synthetic notes and verify readback after authorised changes. Strategy-only requests must not change shared context.
 - Verify focused fetch on a seeded saved patent: outline without bodies, claims-only pages through completion, source attribution, continued blocks, stale cursors, empty/unavailable/unknown sections and import warnings. Content/cursor without `include` and outline with a cursor must fail. Oversized responses must not silently truncate. Preserve entity-prefixed IDs and verify unfiltered legacy content and family readback.
 - Verify developer feedback is unavailable under read-only consent and requires explicit approval of its exact report fields and engineering-channel recipient disclosure. Check that account and client metadata are not added automatically, and that confidential content is excluded.
