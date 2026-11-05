@@ -2,6 +2,14 @@
 
 Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Service 4.23.0 compatibility
+
+- `request_upload_url` and `register_upload` support images in draft innovations' Illustrations sections and supported files in vault folders. Transfer requires host access to original bytes and HTTP PUT; registration confirms the save and is repeatable for the same upload ID.
+- `get_innovation` optionally accepts `include_illustrations`. Calls omitting it retain the earlier response shape. Skills must check this input independently of upload-tool availability.
+- `search` adds the `vault` category for filename/path matching. `fetch` accepts `vault_file:<id>` for file details, a temporary download link and supported inline text. Vault reads currently need write consent and vault access.
+- Connector metadata is prepared for service 4.23.0. This entry does not establish registry publication, host approval or authenticated upload acceptance. Endpoint and OAuth configuration are unchanged.
+- Refresh each host's tool definitions independently of plugin publication. Exercise file transfer, confirmed registration, readback, read-only access, missing/held tools and unsupported-host continuations before claiming acceptance. The prepared portable 5.4.3 / Claude 1.7.3 skills describe these workflows using advertised capabilities.
+
 ## Service 4.22.0 compatibility
 
 - Tool titles are reworded to describe each action in Lightbringer, and tools advertise short in-progress and completed status messages for hosts that display them. Tool names, inputs, effects and permissions are unchanged; annotation hints other than titles are unchanged.
