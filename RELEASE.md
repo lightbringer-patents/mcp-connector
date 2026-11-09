@@ -2,6 +2,14 @@
 
 Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Service 4.23.0 metadata alignment
+
+Public initialization on 2026-11-09 returned `serverInfo.version: 4.23.0`.
+The candidate metadata now matches that service version. This check verifies
+anonymous initialization only; it does not establish authenticated host acceptance
+or registry publication of this metadata. The endpoint and OAuth configuration
+are unchanged.
+
 ## Service 4.22.0 compatibility
 
 - Tool titles are reworded to describe each action in Lightbringer, and tools advertise short in-progress and completed status messages for hosts that display them. Tool names, inputs, effects and permissions are unchanged; annotation hints other than titles are unchanged.
