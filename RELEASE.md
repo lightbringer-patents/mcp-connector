@@ -20,6 +20,14 @@ Not yet released or verified. Record the service version and acceptance results 
 - Connector metadata is prepared for service 4.23.0. This entry does not establish registry publication, host approval or authenticated upload acceptance. Endpoint and OAuth configuration are unchanged.
 - Refresh each host's tool definitions independently of plugin publication. Exercise file transfer, confirmed registration, readback, read-only access, missing/held tools and unsupported-host continuations before claiming acceptance. The prepared portable 5.4.3 / Claude 1.7.3 skills describe these workflows using advertised capabilities.
 
+## Service 4.23.0 metadata alignment
+
+Public initialization on 2026-11-09 returned `serverInfo.version: 4.23.0`.
+The candidate metadata now matches that service version. This check verifies
+anonymous initialization only; it does not establish authenticated host acceptance
+or registry publication of this metadata. The endpoint and OAuth configuration
+are unchanged.
+
 ## Service 4.22.0 compatibility
 
 - Tool titles are reworded to describe each action in Lightbringer, and tools advertise short in-progress and completed status messages for hosts that display them. Tool names, inputs, effects and permissions are unchanged; annotation hints other than titles are unchanged.
