@@ -101,7 +101,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
 | `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
 | `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
-| `delete_asset` | write | Permanently delete a resolved Strategy when explicitly requested. |
+| `delete_asset` | write | Permanently delete a resolved Strategy, or a vault file by its `vault_file:` reference, when explicitly requested. |
 | `list_strategies` | read | List accessible Strategies and their publication status. |
 | `get_strategy` | read | Read Strategy sections and the current edit revision. |
 | `create_strategy` | write | Save a populated draft Strategy. |
@@ -171,6 +171,8 @@ tools, and installed skills provide fuller workflow practices.
 **Validation-country selection is separate from approval.** Read `get_review` first. `set_validation_countries` replaces the whole selection using two-letter EPC state codes or `UP` for the Unitary Patent; changing it returns earlier approvals to pending. Only an eligible reviewer or specialist can change an open review. The selected countries do not establish completed validation; approval uses `respond_to_review` separately.
 
 **Reviews distinguish Strategies, reports and documents.** `list_reviews` includes reviews where you are a participant or creator, with available Strategy, report, case and connected-innovation references. Preserve the returned `target` (`strategy`, `report` or `document`) when identifying the reviewed artifact. Read the selected review before posting authorised feedback. `respond_to_review` accepts an optional message of up to 2,000 characters and sends notification email; approval cannot be withdrawn through this tool.
+
+**Vault file deletion is permanent.** Where its advertised schema offers the `vault_file` variant, `delete_asset` accepts `{ "type": "vault_file", "id": "vault_file:<id>" }` with a reference returned by `search` or `fetch`, and deletes that one file. It requires write consent and the same vault permissions as deleting the file in Lightbringer; members who can see only their own files can delete only those. Folders cannot be deleted this way. A successful result names the deleted file and its folder. A not-found answer means the file may already have been deleted or is not accessible; search the vault to confirm instead of retrying. If the outcome is unknown, search the vault before retrying or reporting a failure. A host still holding the earlier tool definition offers Strategy deletion only until it refreshes its tools.
 
 **Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
 
