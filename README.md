@@ -8,8 +8,8 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 
 ## What you can do
 
-- **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, and enrich them over time without creating duplicates.
-- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports and meeting notes or transcripts. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, list the trade secret register entries you can open by reference, title, status and dates, without entry content.
+- **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, enrich them over time and add illustrations to draft innovations without creating duplicates.
+- **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports, meeting notes or transcripts and vault files. Save files into vault folders when authorised and supported by the host. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, list the trade secret register entries you can open by reference, title, status and dates, without entry content.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
@@ -92,11 +92,13 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_company_context` | read | Read the organisation's profile, shared notes, update permission and current revision. |
 | `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
 | `update_company_context` | write | Update selected profile fields or shared notes using the current revision; requires moderator rights and write consent. |
-| `search` | read | Find accessible innovations, documents, Strategies and meetings. |
-| `fetch` | read | Retrieve accessible content, opt into complete Strategy asset state with `include_asset: true`, or read selected patent sections with pagination. |
+| `search` | read | Find accessible innovations, documents, Strategies, meetings and vault files by name or folder path. |
+| `fetch` | read | Read accessible records or vault files, opt into complete Strategy asset state, or read selected patent sections with pagination. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
-| `get_innovation` | read | Read an innovation's current content. |
+| `get_innovation` | read | Read an innovation's content; optionally list its illustrations and drawing suggestions when supported. |
+| `request_upload_url` | write | Start one authorised illustration or vault upload and obtain its transfer instructions. |
+| `register_upload` | write | Finish a transferred upload, confirming the saved drawing or vault file. |
 | `list_trade_secrets` | read¹ | List the trade secret register entries you can open by reference, title, status and dates, without entry content. |
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
 | `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
@@ -138,6 +140,12 @@ The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset
 `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
+
+**Files have distinct destinations.** Illustration uploads append PNG, JPEG or WebP images to a selected draft innovation. Vault uploads save supported documents, images or text/code files in folders; missing folders are created and existing names are not overwritten. Both have a 25 MB limit. Vault storage does not attach a file to an innovation, link it to a case or create a disclosure. Reading a supplied file does not authorise storing it.
+
+Both upload tools, the requested destination, write consent and destination access must be available. A capable host transfers original bytes using the method and headers from `request_upload_url`, then calls `register_upload` after the PUT succeeds. A shell is optional; the returned curl command is an example. If bytes or transfer capability are unavailable, continue on the destination page in Lightbringer. Only confirmed registration establishes a saved file. Reuse the same upload ID after retryable or uncertain registration; do not create a duplicate upload to recover a lost response.
+
+**Vault reads require write consent and vault access**, despite being read-only operations. Search with `category: "vault"` matches names and folder paths, not contents. Follow pagination and preserve the returned `vault_file:<id>` when fetching; after an upload, prefix `vault_file.id` the same way. Fetch returns details and a download link valid for about an hour, plus inline content for supported text/code files up to 256 KB. Metadata or a link alone does not mean the file was read. For drawing readback, use `get_innovation(include_illustrations: true)` only when advertised. A held read does not invalidate a confirmed upload. See the [file workflow](https://github.com/lightbringer-patents/agent-plugin/blob/main/skills/lightbringer-navigation/references/files.md) for capability checks and continuations.
 
 For Strategies, prefer shared asset writes with the required `search` and opt-in
 `fetch` schemas when advertised. `create_strategy`, `edit_strategy`,
