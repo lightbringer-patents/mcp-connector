@@ -4,7 +4,7 @@ Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and fiv
 
 ## Service 4.25.0 catch-up
 
-- Align `server.json` with the live service and reconcile #27 and #28. The registry still listed 4.21.1 when checked on 13 November 2026; preparing this metadata does not publish it.
+- `server.json` matches the live service and reconciles #27 and #28. Connector metadata 4.25.0 was published on 13 November 2026 at 17:39:23 UTC. The [latest registry entry](https://registry.modelcontextprotocol.io/v0.1/servers/com.lightbringer%2Fconnector/versions/latest) returned version 4.25.0 with active status and `isLatest: true`.
 - Include `show_patent_portfolio` and `show_invention_capture`, illustration/vault uploads, optional illustration readback and collaborator invitations. Preserve existing tool names and compatibility inputs.
 - Components, new schemas and package versions are reviewed independently by each host. If presentation is unavailable or held, retain concise text and platform continuations; do not assume package publication unlocks tools.
 - The combined plugin candidates are portable 5.6.1 and Claude 1.9.1. Their eleven skills include restored patent-review guidance and conditional journeys. Journey tools and the vault-deletion input are not part of the normal 4.25.0 catalogue.
