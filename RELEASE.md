@@ -1,6 +1,14 @@
 # Connector release and compatibility
 
-Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
+Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
+
+## Service 4.25.0 catch-up
+
+- Align `server.json` with the live service and reconcile #27 and #28. The registry still listed 4.21.1 when checked on 13 November 2026; preparing this metadata does not publish it.
+- Include `show_patent_portfolio` and `show_invention_capture`, illustration/vault uploads, optional illustration readback and collaborator invitations. Preserve existing tool names and compatibility inputs.
+- Components, new schemas and package versions are reviewed independently by each host. If presentation is unavailable or held, retain concise text and platform continuations; do not assume package publication unlocks tools.
+- The combined plugin candidates are portable 5.6.1 and Claude 1.9.1. Their eleven skills include restored patent-review guidance and conditional journeys. Journey tools and the vault-deletion input are not part of the normal 4.25.0 catalogue.
+- Anonymous discovery and local validation do not establish authenticated write acceptance, directory approval or registry publication. Endpoint and OAuth configuration are unchanged.
 
 ## Next service release: vault file deletion
 
