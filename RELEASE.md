@@ -2,6 +2,16 @@
 
 Public discovery on 2026-10-29 returned service version 4.21.1, 39 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Next service release: vault file deletion
+
+Not yet released or verified. Record the service version and acceptance results here when the release is checked.
+
+- `delete_asset` adds a `vault_file` input variant that permanently deletes one vault file by the `vault_file:<id>` reference returned by `search` or `fetch`. The Strategy variant's inputs, results and behavior are unchanged, and no tool, scope, endpoint or OAuth configuration is added.
+- Deletion requires write consent and the caller's existing vault permissions. Folders cannot be deleted through this variant. A vault result returns the deleted file's name and folder; the Strategy result shape is unchanged.
+- A not-found answer means the file may already have been deleted or is not accessible. An unknown outcome asks the client to search the vault before retrying or reporting a failure.
+- This is an additive change to an existing tool. Hosts keep Strategy-only deletion until they refresh their tool definitions. Before claiming acceptance, refresh each supported host and verify that it accepts the updated definition and offers the `vault_file` variant, then delete a synthetic vault file and confirm through `search` that it is gone.
+- This release does not require a plugin package update.
+
 ## Service 4.22.0 compatibility
 
 - Tool titles are reworded to describe each action in Lightbringer, and tools advertise short in-progress and completed status messages for hosts that display them. Tool names, inputs, effects and permissions are unchanged; annotation hints other than titles are unchanged.
