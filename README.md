@@ -35,6 +35,8 @@ The server advertises its authorization server through RFC 9728 protected-resour
 
 ### Install the skills with the connector
 
+For Claude, install the [full Lightbringer plugin](https://claude.ai/customize/plugins/id/9f984aa9-66a9-4ee7-adcb-206321025e9f%40anthropic-plugin-directory), then connect Lightbringer through its Connectors tab. The full plugin includes the workflow skills; adding only the MCP connector does not. The repository also documents Claude Code installation.
+
 The MCP server supplies available tools, schemas and general service instructions. Skills guide the assistant through a workflow using those tools; they do not grant additional permissions or add server capabilities.
 
 | Skill | How it uses MCP |
@@ -109,7 +111,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
 | `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
 | `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
-| `delete_asset` | write | Permanently delete a resolved Strategy when explicitly requested. |
+| `delete_asset` | write | Permanently delete a resolved Strategy or vault file when explicitly requested. |
 | `list_strategies` | read | List accessible Strategies and their publication status. |
 | `get_strategy` | read | Read Strategy sections and the current edit revision. |
 | `create_strategy` | write | Save a populated draft Strategy. |
@@ -120,6 +122,11 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
 | `get_review` | read | Read review documents, comments, discussion and available validation-country choices. |
 | `set_validation_countries` | write | Replace the country selection on an open validation review; earlier approvals return to pending. |
+| `list_journeys` | read | Discover journeys available to the connected user, their inputs and expected outcomes. |
+| `start_journey` | write⁴ | Start a listed journey and return its conversation task. |
+| `answer_agent` | write⁴ | Answer pending conversation questions so the agent can continue. |
+| `ask_agent` | write | Continue a completed journey or one needing attention; requires write consent. |
+| `cancel_task` | write⁴ | Stop a running conversation when explicitly requested; already saved work remains. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
 | `register_innovation` | write | Validate and save an innovation in one request. |
@@ -128,7 +135,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
 | `start_innovation_feedback` | write² | Dispatch automated description analysis and return a task. |
-| `get_task_status` | write² | Refresh an automated feedback task using its `task_id` and save its status and available findings. |
+| `get_task_status` | write² | Read an automated feedback task or journey conversation by `task_id`; refresh active feedback results or wait for conversation status changes. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
 | `add_comment` | write | Add a comment anchored to a review document passage. |
 | `reply_to_comment` | write | Reply to an existing comment thread. |
@@ -141,7 +148,9 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ³ Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
+⁴ Read consent permits starting, answering and cancelling journey conversations without granting write access to the journey. Other supported conversations require write consent for `answer_agent` and `cancel_task`. Availability follows the connected tool catalogue.
+
+The following tools carry `destructiveHint: true`: `cancel_task`, `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools advertise `destructiveHint: false`.
 
 `search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
@@ -188,7 +197,7 @@ tools, and installed skills provide fuller workflow practices.
 
 **Reviews distinguish Strategies, reports and documents.** `list_reviews` includes reviews where you are a participant or creator, with available Strategy, report, case and connected-innovation references. Preserve the returned `target` (`strategy`, `report` or `document`) when identifying the reviewed artifact. Read the selected review before posting authorised feedback. `respond_to_review` accepts an optional message of up to 2,000 characters and sends notification email; approval cannot be withdrawn through this tool.
 
-**Vault file deletion is not offered by service 4.25.0.** `delete_asset` currently deletes Strategies. See the [release guide](RELEASE.md#next-service-release-vault-file-deletion) for the proposed additive vault variant; do not send unadvertised inputs.
+**Vault file deletion is permanent.** Where the connected `delete_asset` schema advertises `vault_file`, resolve the exact `vault_file:<id>` through `search` or `fetch` before an explicitly requested deletion. Write consent and vault access are required; folders cannot be deleted. If the outcome is unknown, search before retrying. See the [release guide](RELEASE.md#vault-file-deletion) for host verification limits.
 
 **Patent imports save publications.** Imports distinguish your own portfolio from third-party references and return saved-record links and processing warnings. Own-patent imports automatically attempt family grouping. A targeted family refresh can add missing relationships among saved own patents; it does not import more publications, remove existing relationships, or update patent text, assets or legal status.
 

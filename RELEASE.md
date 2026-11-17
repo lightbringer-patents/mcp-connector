@@ -1,6 +1,13 @@
 # Connector release and compatibility
 
-Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
+Public discovery on 2026-11-17 returned service version 4.26.0, 49 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
+
+## Service 4.26.0 discovery
+
+- Align connector metadata with the live service. This preparation does not establish registry publication or host approval.
+- Public discovery now advertises `list_journeys`, `start_journey`, `ask_agent`, `answer_agent` and `cancel_task`. `get_task_status` also returns journey conversation progress, questions and outcomes.
+- The existing journeys skill runs only when the required tools are available in the connected host. Plugin package versions and host reviews remain independent.
+- The `delete_asset` schema now includes vault files. Anonymous schema verification does not establish authenticated deletion acceptance.
 
 ## Service 4.25.0 catch-up
 
@@ -10,9 +17,9 @@ Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and fiv
 - The combined plugin candidates are portable 5.6.1 and Claude 1.9.1. Their eleven skills include restored patent-review guidance and conditional journeys. Journey tools and the vault-deletion input are not part of the normal 4.25.0 catalogue.
 - Anonymous discovery and local validation do not establish authenticated write acceptance, directory approval or registry publication. Endpoint and OAuth configuration are unchanged.
 
-## Next service release: vault file deletion
+## Vault file deletion
 
-Not yet released or verified. Record the service version and acceptance results here when the release is checked.
+The input variant is present in service 4.26.0 public discovery, checked on 2026-11-17. Authenticated deletion and each host’s acceptance remain unverified.
 
 - `delete_asset` adds a `vault_file` input variant that permanently deletes one vault file by the `vault_file:<id>` reference returned by `search` or `fetch`. The Strategy variant's inputs, results and behavior are unchanged, and no tool, scope, endpoint or OAuth configuration is added.
 - Deletion requires write consent and the caller's existing vault permissions. Folders cannot be deleted through this variant. A vault result returns the deleted file's name and folder; the Strategy result shape is unchanged.
