@@ -2,6 +2,20 @@
 
 Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Service 4.26.0
+
+Not yet verified against the deployed service. Record the discovery date, tool count and acceptance results here when the release is checked.
+
+- **Journeys.** `list_journeys`, `start_journey`, `answer_agent`, `cancel_task` and `ask_agent` become part of the regular catalogue. Journeys can be listed, started, answered and cancelled with read consent; on a read-only connection the journey's agent does not save. `ask_agent` requires write consent and continues a completed journey conversation, or one that needs attention.
+- **Task status.** `get_task_status` accepts an optional `wait_seconds` on every connection and returns agent conversations as well as feedback tasks. Feedback-task calls and results are unchanged: a feedback task returns at once. Conversation results can include `next_step`.
+- **MCP tasks.** On protocol version 2026-07-28, a client that declares the Tasks extension can receive an MCP task for a running journey turn and follow it with `tasks/get`, or stop it with `tasks/cancel`. Other clients receive the conversation task as before.
+- **Vault file deletion.** `delete_asset` adds a `vault_file` input variant that permanently deletes one vault file by the `vault_file:<id>` reference returned by `search` or `fetch`. It requires write consent and the caller's existing vault permissions; folders cannot be deleted through this variant. A vault result returns the deleted file's name and folder. The Strategy variant's inputs, results and behavior are unchanged. A not-found answer means the file may already have been deleted or is not accessible; an unknown outcome asks the client to search the vault before retrying or reporting a failure.
+- **Portfolio component.** `show_patent_portfolio` describes groups as patent families and records as applications. For an application in prosecution, a record can include the current prosecution step, who it awaits, the office action date and the open response deadline recorded in Lightbringer.
+- **Components and instructions.** The invention-capture component loads stored artwork only from Lightbringer's own storage. Buttons in the review inbox, invention capture and report components send requests that name the selected record IDs. Server instructions place the essential service rules first. Tool results contain only the fields their advertised output schemas define.
+- **Host review.** New tools become available in each host only after its checks, and changed definitions may remain held, so hosts can expose different combinations. The journeys skill starts a journey only when the connection also offers `answer_agent` and a `get_task_status` that accepts `wait_seconds`. That guard is a skill change and needs a package update; package publication remains separate from tool review.
+- **Acceptance checks.** Before claiming acceptance, refresh each supported host and verify which journey tools and updated definitions it offers. Run a synthetic journey through questions, an outcome and cancellation on read-only and read/write connections. Delete a synthetic vault file and confirm through `search` that it is gone. Confirm that existing feedback-task, Strategy-deletion and portfolio paths still work with the earlier definitions.
+- Endpoint and OAuth configuration are unchanged.
+
 ## Service 4.25.0 catch-up
 
 - Align `server.json` with the live service and reconcile #27 and #28. The registry still listed 4.21.1 when checked on 13 November 2026; preparing this metadata does not publish it.
@@ -9,16 +23,6 @@ Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and fiv
 - Components, new schemas and package versions are reviewed independently by each host. If presentation is unavailable or held, retain concise text and platform continuations; do not assume package publication unlocks tools.
 - The combined plugin candidates are portable 5.6.1 and Claude 1.9.1. Their eleven skills include restored patent-review guidance and conditional journeys. Journey tools and the vault-deletion input are not part of the normal 4.25.0 catalogue.
 - Anonymous discovery and local validation do not establish authenticated write acceptance, directory approval or registry publication. Endpoint and OAuth configuration are unchanged.
-
-## Next service release: vault file deletion
-
-Not yet released or verified. Record the service version and acceptance results here when the release is checked.
-
-- `delete_asset` adds a `vault_file` input variant that permanently deletes one vault file by the `vault_file:<id>` reference returned by `search` or `fetch`. The Strategy variant's inputs, results and behavior are unchanged, and no tool, scope, endpoint or OAuth configuration is added.
-- Deletion requires write consent and the caller's existing vault permissions. Folders cannot be deleted through this variant. A vault result returns the deleted file's name and folder; the Strategy result shape is unchanged.
-- A not-found answer means the file may already have been deleted or is not accessible. An unknown outcome asks the client to search the vault before retrying or reporting a failure.
-- This is an additive change to an existing tool. Hosts keep Strategy-only deletion until they refresh their tool definitions. Before claiming acceptance, refresh each supported host and verify that it accepts the updated definition and offers the `vault_file` variant, then delete a synthetic vault file and confirm through `search` that it is gone.
-- This release does not require a plugin package update.
 
 ## Service 4.23.0 compatibility
 
