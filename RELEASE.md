@@ -2,6 +2,21 @@
 
 Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Service 4.27.0
+
+Not yet verified against the deployed service. Record the discovery date, tool count and acceptance results here when the release is checked.
+
+- **Innovation and disclosure assets.** `create_asset`, `update_asset` and `delete_asset` add `innovation` and `invention_disclosure` variants. `update_asset` also edits a case's related innovations through a `document:<id>#case` reference and archives or restores records as a separate change; `delete_asset` also removes a supporting attachment. The Strategy and vault variants are unchanged. `fetch` with `include_asset: true` returns innovation, disclosure, draft, report and case relationship state, with optional `include_insights_and_illustrations`, `include_attachments`, `include_inventors` and `include_discussions`.
+- **Linked disclosures.** `register_innovation` accepts optional `sourceInnovations`, and `sourceIdeas` as its earlier name; supply one or the other. The `create_asset` disclosure variant accepts a definition together with `sourceInnovations`, which links the saved innovations and carries over their supporting files and drawings. Calls without source references are unchanged.
+- **Supporting files.** `request_upload_url` adds a `document` destination for supporting files on an innovation or draft invention disclosure, and `get_attachment` reads an original file by its attachment ID. Illustration and vault uploads are unchanged.
+- **Record comments.** `comment`, `update_comment_thread` and `delete_comment` start, reply to, resolve, reopen and delete comment threads on invention disclosures, patent drafts and commentable reports. `get_innovation` and `fetch` accept `include_discussions`. Review comments continue to use the review tools. Server instructions ask for approval of outgoing comments and a thread check after an uncertain result.
+- **Journeys.** `start_journey` names each journey it can start, with its inputs, in its own description, and accepts only those journeys and inputs. `list_journeys` is retired; a call from a client holding an older tool list returns guidance to use `start_journey`. `ask_agent` is available on read-only connections for journey conversations.
+- **Tasks.** `list_tasks` accepts optional `include_conversations`, which defaults to false; without it the listing returns feedback tasks as before. When a start or follow-up returns an unexpected response, the result explains that the work possibly started and asks the client to check before starting it again.
+- **Invention capture component.** `review_digest` accepts `optional_suggestions`, or `optional_ideas` as its earlier name, but not both.
+- **Host review.** New tools become available in each host only after its checks, and changed definitions may remain held, so hosts can expose different combinations. On ChatGPT a removed tool disappears immediately, while a held `start_journey` keeps its earlier description; the journeys skill starts no journey when `start_journey` names none. Skills use linked registration only when a definition advertising the source field is available.
+- **Acceptance checks.** Before claiming acceptance, refresh each supported host and record which new and updated definitions it offers. With a synthetic workspace, register a disclosure linked to a saved innovation through each advertised path and read it back; add, reply to, resolve and delete a comment on a synthetic disclosure; upload, read and delete a supporting file. Confirm that feedback-task listing, Strategy and vault paths and the invention capture component still work with the earlier definitions.
+- Endpoint and OAuth configuration are unchanged.
+
 ## Service 4.26.0
 
 Not yet verified against the deployed service. Record the discovery date, tool count and acceptance results here when the release is checked.
