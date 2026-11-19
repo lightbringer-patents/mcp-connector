@@ -8,13 +8,13 @@ This is a metadata and documentation repository for a remote, hosted MCP server.
 
 ## What you can do
 
-- **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations, enrich them over time and add illustrations to draft innovations without creating duplicates.
+- **Capture innovations where you work.** Identify ideas from an inventor conversation or authorised technical sources. Search for existing records, register new innovations and invention disclosures, enrich them over time, and add supporting files or illustrations without creating duplicates.
 - **Use existing context.** Read the shared company brief and retrieve accessible innovations, patents, Strategies, reports, meeting notes or transcripts and vault files. Save files into vault folders, or delete selected vault files, when authorised and supported by the host. Read selected patent sections for focused questions, and save authorised company-context updates when you have permission. Where your organisation allows it, list the trade secret register entries you can open by reference, title, status and dates, without entry content.
 - **Develop an IP strategy.** Follow the current capture guide, save a populated draft, and revise it using the current record revision. Publication and deletion are separate explicit actions and require appropriate permissions.
 - **Refine an innovation description.** Start automated feedback, follow its progress and read the findings. This checks the description rather than establishing novelty or patentability.
-- **Hand work to Lightbringer's agent.** Where the connection offers journeys, start a listed journey that Lightbringer's agent carries out in a conversation of its own, answer its questions and read its reported outcome.
+- **Hand work to Lightbringer's agent.** Where the connection offers journeys, start one of the journeys it names, which Lightbringer's agent carries out in a conversation of its own, answer its questions and read its reported outcome.
 - **Request patent preparation.** Ask Lightbringer to prepare a selected innovation for patent filing. Registration alone does not initiate this workflow. An explicit preparation request does not require an automated feedback or revision cycle first.
-- **Collaborate with your patent team.** Read reviews, attorney comments and proposed amendments; add comments, reply in discussions and respond to reviews using your existing permissions.
+- **Collaborate with your patent team.** Read reviews, attorney comments and proposed amendments; add comments, reply in discussions and respond to reviews using your existing permissions. Comment directly on invention disclosures, patent drafts and commentable reports where supported.
 - **Import portfolios and build patent families.** Find public publications by company name or publication number, import your own patents or third-party references, and group saved own patents into families.
 
 MCP access is available to Lightbringer platform subscribers, free or paid. Professional work is provided through separate paid engagements. The tools below define what can be initiated or consumed directly through MCP today; other service arrangements continue through the platform or Lightbringer team, including meetings where relevant. Agents cannot make payments.
@@ -42,7 +42,7 @@ The MCP server supplies available tools, schemas and general service instruction
 |---|---|
 | `innovation-capture` | Explore authorised context, search for related innovations, register or update records, and optionally start automated feedback and follow its task. |
 | `patent-review` | Read review instructions and material, draft feedback, and carry out approved comments, country choices or review responses. |
-| `journeys` | Follow a listed journey only when its tools are advertised; otherwise use the relevant workflow. |
+| `journeys` | Start a journey named by `start_journey` only when the journey tools are advertised; otherwise use the relevant workflow. |
 | `patent-preparation` | Resolve the selected innovation, preserve the user's explicit patenting intent, request preparation and explain the actual outcome. |
 | `lightbringer-navigation` | Choose a relevant next step and explain the patent process or platform/team continuation. |
 | `novelty-exploration` | Explore related public patent disclosures and save selected references when authorised. |
@@ -97,20 +97,21 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
 | `update_company_context` | write | Update selected profile fields or shared notes using the current revision; requires moderator rights and write consent. |
 | `search` | read | Find accessible innovations, documents, Strategies, meetings and vault files by name or folder path. |
-| `fetch` | read | Read accessible records or vault files, opt into complete Strategy asset state, or read selected patent sections with pagination. |
+| `fetch` | read | Read accessible records or vault files, opt into complete asset state for Strategies, innovations, invention disclosures, drafts, reports and case relationships, or read selected patent sections with pagination. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `list_innovations` | read | Find existing innovations. |
 | `show_invention_capture` | read | Present a saved innovation or its feedback through a supported component; retain a text fallback when unavailable. |
 | `show_patent_portfolio` | read | Present saved applications grouped into patent families, with recorded coverage and, for applications in prosecution, the current step and response deadline recorded in Lightbringer, through a supported component. |
 | `invite_members` | write | Invite approved people and roles to a saved innovation or published Strategy, subject to invitation permissions. |
-| `get_innovation` | read | Read an innovation's content; optionally list its illustrations and drawing suggestions when supported. |
-| `request_upload_url` | write | Start one authorised illustration or vault upload and obtain its transfer instructions. |
-| `register_upload` | write | Finish a transferred upload, confirming the saved drawing or vault file. |
+| `get_innovation` | read | Read an innovation's content; optionally list its illustrations, drawing suggestions and comment threads when supported. |
+| `request_upload_url` | write | Start one authorised illustration, supporting-file or vault upload and obtain its transfer instructions. |
+| `register_upload` | write | Finish a transferred upload, confirming the saved drawing, supporting file or vault file. |
+| `get_attachment` | read | Read an original supporting file attached to an innovation or invention disclosure, by its attachment ID. |
 | `list_trade_secrets` | read¹ | List the trade secret register entries you can open by reference, title, status and dates, without entry content. |
 | `get_strategy_template` | read | Retrieve the current Strategy capture guide, schema and example; requires Strategy management rights. |
-| `create_asset` | write | Save a populated draft Strategy using the shared asset interface. |
-| `update_asset` | write | Update a Strategy using complete asset state and its current revision. |
-| `delete_asset` | write | Permanently delete a resolved Strategy or vault file when explicitly requested. |
+| `create_asset` | write | Save an innovation, an invention disclosure (optionally linked to saved innovations) or a populated draft Strategy. |
+| `update_asset` | write | Update an innovation, editable invention disclosure, Strategy or case relationships using complete asset state and its current revision. |
+| `delete_asset` | write | Permanently delete a resolved Strategy, vault file, innovation, draft disclosure or supporting attachment when explicitly requested. |
 | `list_strategies` | read | List accessible Strategies and their publication status. |
 | `get_strategy` | read | Read Strategy sections and the current edit revision. |
 | `create_strategy` | write | Save a populated draft Strategy. |
@@ -121,20 +122,22 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
 | `get_review` | read | Read review documents, comments, discussion and available validation-country choices. |
 | `set_validation_countries` | write | Replace the country selection on an open validation review; earlier approvals return to pending. |
-| `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter and pagination. |
+| `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter, agent conversations and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
-| `register_innovation` | write | Validate and save an innovation in one request. |
+| `register_innovation` | write | Validate and save an innovation in one request, optionally linking it to saved source innovations. |
 | `import_patent` | write | Save a publication as an own patent or third-party reference. |
 | `refresh_patent_family` | write | Update family grouping among saved own patents. |
 | `update_innovation` | write | Replace selected sections of an existing innovation. |
 | `request_patent_preparation` | write | Request Lightbringer's patent-preparation workflow. |
 | `start_innovation_feedback` | write² | Dispatch automated description analysis and return a task. |
 | `get_task_status` | write² | Refresh an automated feedback task, or read an agent conversation, using its `task_id`; waits up to `wait_seconds` for a running conversation to change. |
-| `list_journeys` | read⁴ | List the journeys Lightbringer's agent can carry out, with their inputs, outcome and completion criteria. |
-| `start_journey` | write⁴ | Start a listed journey in an agent conversation and return its conversation task. |
+| `start_journey` | write⁴ | Start one of the journeys named in its own description in an agent conversation and return its conversation task. |
 | `answer_agent` | write⁴ | Send answers to the open questions of an agent conversation. |
-| `ask_agent` | write⁴ | Send a follow-up to a completed journey conversation, or one that needs attention; requires write consent. |
+| `ask_agent` | write⁴ | Send a follow-up to a completed journey conversation, or one that needs attention. |
 | `cancel_task` | write⁴ | Stop a running agent conversation when the user asks. |
+| `comment` | write⁵ | Start a comment thread on a quoted passage of an invention disclosure, patent draft or commentable report, or reply to one of its threads. |
+| `update_comment_thread` | write⁵ | Resolve or reopen a comment thread on a record. |
+| `delete_comment` | write⁵ | Permanently delete a comment thread or one reply, subject to the web app's deletion rules. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
 | `add_comment` | write | Add a comment anchored to a review document passage. |
 | `reply_to_comment` | write | Reply to an existing comment thread. |
@@ -147,17 +150,23 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 
 ³ Requires write consent when developer feedback is enabled. Before sending, obtain explicit approval for the exact report text, category, optional tool name and recipient disclosure. Reports go to a human-reviewed Lightbringer engineering Slack channel that the signed-in user cannot view. Only the approved report fields are sent; account and client metadata are not added automatically. Do not include confidential document or innovation content, or conversation transcripts.
 
-⁴ Journey tools. All except `ask_agent` are available under read consent; on a read-only connection the journey's agent does not save anything. Labels for these tools describe their effect; `tools/list` reports their advertised annotations.
+⁴ Journey tools, available under read consent. On a read-only connection the journey's agent does not save anything, and `ask_agent` continues only journey conversations. Labels for these tools describe their effect; `tools/list` reports their advertised annotations.
 
-The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, and `send_developer_feedback`. Other tools, except the journey tools whose annotations `tools/list` reports, advertise `destructiveHint: false`.
+⁵ Record comment tools, which require write consent and the user's existing comment permissions on the record. Comments on review documents continue to use the review tools. Labels for these tools describe their effect; `tools/list` reports their advertised annotations.
 
-`search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools, except the journey tools whose annotations `tools/list` reports, advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
+The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset`, `update_company_context`, `delete_strategy`, `edit_strategy`, `set_strategy_publication`, `delete_task`, `update_innovation`, `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment`, `send_developer_feedback` and `delete_comment`. Other tools, except the journey tools, `comment` and `get_attachment`, whose annotations `tools/list` reports, advertise `destructiveHint: false`.
+
+`search_public_patents`, `import_patent` and `refresh_patent_family` advertise `openWorldHint: true` because they use external patent sources. `request_patent_preparation`, `respond_to_review`, `add_comment`, `reply_to_comment`, `add_discussion_comment` and `send_developer_feedback` also advertise `openWorldHint: true` because they can send notifications or reports to others. Other tools, except the journey tools, `comment` and `get_attachment`, whose annotations `tools/list` reports, advertise `openWorldHint: false`. Annotations describe behavior; they do not grant access.
 
 ## Workflow behavior
 
 **Invitations need explicit approval.** Where the connected tool and your permissions allow it, `invite_members` invites named people to a saved innovation or published Strategy. Confirm the exact people, email addresses and roles before sending; report per-person outcomes without resending successful invitations. Publishing a draft Strategy remains a separate action.
 
-**Files have distinct destinations.** Illustration uploads append PNG, JPEG or WebP images to a selected draft innovation. Vault uploads save supported documents, images or text/code files in folders; missing folders are created and existing names are not overwritten. Both have a 25 MB limit. Vault storage does not attach a file to an innovation, link it to a case or create a disclosure. Reading a supplied file does not authorise storing it.
+**Innovations and invention disclosures use the shared asset tools.** Where advertised, `create_asset` saves a lightweight innovation or an invention disclosure. A disclosure registered together with `sourceInnovations` links the selected saved innovations and carries over their supporting files and drawings; `register_innovation` accepts the same optional source references. `fetch` with `include_asset: true` returns complete state and revision; `include_attachments` and `include_inventors` add a disclosure's file inventory and inventor IDs. `update_asset` applies revision-checked changes, with archive or restore as a separate change, and edits a case's related innovations through `document:<id>#case`. `delete_asset` permanently deletes a selected innovation, draft disclosure or supporting attachment. Registration and edits do not request patent preparation. Conflicts and uncertain outcomes call for readback before another write.
+
+**Record comments need approval.** `comment` starts a thread on a quoted passage of an invention disclosure, patent draft or commentable report, or replies to one of its threads. Mentioned users with access are notified, and every request posts a new comment. `update_comment_thread` resolves or reopens a thread; `delete_comment` permanently deletes a thread or reply under the web app's rules, and a refused deletion changes nothing. Read existing threads with `include_discussions: true` on `fetch` or `get_innovation`. Show outgoing comments for approval; after an uncertain result, check the threads before sending again.
+
+**Files have distinct destinations.** Illustration uploads append PNG, JPEG or WebP images to a selected draft invention disclosure. Supporting-file uploads attach an original document to a selected innovation or draft invention disclosure; `get_attachment` reads it back by its attachment ID. Vault uploads save supported documents, images or text/code files in folders; missing folders are created and existing names are not overwritten. Each has a 25 MB limit. Vault storage does not attach a file to an innovation, link it to a case or create a disclosure. Reading a supplied file does not authorise storing it.
 
 Both upload tools, the requested destination, write consent and destination access must be available. A capable host transfers original bytes using the method and headers from `request_upload_url`, then calls `register_upload` after the PUT succeeds. A shell is optional; the returned curl command is an example. If bytes or transfer capability are unavailable, continue on the destination page in Lightbringer. Only confirmed registration establishes a saved file. Reuse the same upload ID after retryable or uncertain registration; do not create a duplicate upload to recover a lost response.
 
@@ -190,7 +199,7 @@ tools, and installed skills provide fuller workflow practices.
 
 **Automated feedback returns a task.** `start_innovation_feedback` returns one `task_id` for the complete feedback run, plus `status`, `progress` and per-analysis `results`. Use that same ID with `get_task_status`. Continue while `queued` or `running`; stop at `succeeded`, `partially_succeeded` or `failed`. Report successful findings alongside individual failures. The initial call returns after dispatch by default; ending a wait does not cancel the analysis.
 
-**Journeys run in agent conversations.** Where the connection advertises them, `list_journeys` describes the journeys Lightbringer's agent can carry out: when to use each, its inputs, the outcome it delivers and what done means. `start_journey` starts one with the inputs already known and returns an `agent_conversation` task. While it is `running`, `get_task_status` waits up to `wait_seconds` for a change. When it is `awaiting_input`, `answer_agent` sends the answers to its questions. `cancel_task` stops a running conversation when the user asks. `ask_agent` sends a follow-up to a completed journey conversation, or one that needs attention, and requires write consent. A finished journey reports its outcome, including sources it could not check. Results may include a `next_step` describing the next action for the conversation. Conversations do not expire. Clients using protocol version 2026-07-28 that declare the Tasks extension can receive an MCP task for a running journey turn and follow it with `tasks/get`, or stop it with `tasks/cancel`. A reported outcome is not a professional opinion or a service request.
+**Journeys run in agent conversations.** Where the connection advertises them, `start_journey` names each journey it can start in its own description: when to use it, what it reads, what it delivers and the inputs it takes. It starts one with the inputs already known and returns an `agent_conversation` task. While it is `running`, `get_task_status` waits up to `wait_seconds` for a change. When it is `awaiting_input`, `answer_agent` sends the answers to its questions. `cancel_task` stops a running conversation when the user asks. `ask_agent` sends a follow-up to a completed journey conversation, or one that needs attention. A finished journey reports its outcome, including sources it could not check. Results may include a `next_step` describing the next action for the conversation. Conversations do not expire; `list_tasks` with `include_conversations: true` also lists them. Clients using protocol version 2026-07-28 that declare the Tasks extension can receive an MCP task for a running journey turn and follow it with `tasks/get`, or stop it with `tasks/cancel`. A reported outcome is not a professional opinion or a service request. The separate `list_journeys` tool has been retired; a client still holding an older tool list receives guidance to use `start_journey`.
 
 **Patent preparation is a professional service request.** `request_patent_preparation` returns an innovation ID/link and `outcome: requested | already_requested`. It returns no task ID. A new request sends email to the assigned specialist and submitter, with the organisation's primary contact copied when applicable. The outcome confirms a new or existing preparation request, not completed preparation, a paid engagement, email delivery or a patent filing. `get_task_status` does not track preparation requests. Professional-service milestone tracking is not currently exposed through a dedicated MCP tool.
 
