@@ -2,6 +2,22 @@
 
 Public discovery on 2026-11-13 returned service version 4.25.0, 44 tools and five prompts. This verifies anonymous discovery only; authenticated permissions, host acceptance and registry publication remain separate checks. Connector metadata tracks the released service version. Plugin versions are independent of the MCP service version.
 
+## Service 4.29.0
+
+Not yet verified against the deployed service. Record the discovery date, tool count and acceptance results here when the release is checked.
+
+- **Earlier invention disclosure tools retired.** `list_innovations`, `get_innovation`, `register_innovation` and `update_innovation` are removed from the catalogue. Their replacements address the same invention disclosures: `search` with `category: "innovation"` (and `category: "application"` for submitted disclosures), `fetch` with `include_asset: true`, and `create_asset` or `update_asset` with `type: invention_disclosure`. A call from a client that still holds an older tool list returns guidance that names the replacement, and reads and writes nothing. Server instructions and the `request-patent-preparation` prompt name the replacements.
+- **Saved reports.** `show_report` is a new read-only tool with a report view component. It presents a saved report by its `report:<id>` from `search`, `fetch` or a completed run, and returns the complete saved text and the report link. Sections start open or collapsed as the saved report sets them. A completed run that saved a report names it in the result text of `get_task_status`; its structured result is unchanged. Where the view is not available, the assistant gives the text version with a line that says so.
+- **Journeys.** `start_journey` names a further run, a comparison of which inventions to consider protecting, with the inputs `inventions` and `businessContext`. `start_journey` no longer advertises `writable_ids`; a client that holds the earlier definition and sends it starts the same run with no records attached, and the agent asks for access during the run. The description now states what the tool does and what each run delivers. Guidance on giving inputs, following the task and answering questions is in the server instructions and the journeys skill.
+- **Record comments.** `comment`, `update_comment_thread` and `delete_comment` accept a Strategy as a target. A drawing of an invention disclosure, or of a PCT application's inventor additions, takes one thread of its own through the new optional `illustration_id`. `fetch` with `include_discussions` returns these threads. Calls with the earlier arguments are unchanged.
+- **PCT inventor additions.** `fetch` with `include_asset: true` reads `document:<id>#inventor_additions`. `update_asset` adds an `inventor_additions` variant that replaces the text at the fetched revision and changes or removes drawings. `request_upload_url` accepts that asset ID as an illustration destination. The other variants are unchanged.
+- **Report assets.** Section entries of a report asset returned by `fetch` can carry `initiallyCollapsed`. A host that holds the earlier `fetch` definition can receive this field.
+- **Patent tools.** The descriptions of `import_patent` and `refresh_patent_family` are shortened. Inputs, results and behavior are unchanged.
+- **Review inbox component.** The first tab is labelled Prioritised. Review selection and status requests are unchanged.
+- **Host review.** On ChatGPT the four retired tools disappear at once, `show_report` becomes available only after its checks, and changed definitions may remain held, so hosts can expose different combinations. Skills select operations from the tools and fields a connection advertises. Where a replacement write is not advertised, a disclosure stays in the conversation as pending registration. Where `show_report` is not advertised, a saved report is given as text with its link.
+- **Acceptance checks.** Before claiming acceptance, refresh each supported host and record which tools and updated definitions it offers. With a synthetic workspace, register, read and update a disclosure through the asset tools, and call a retired tool from a client that holds an older list to confirm the guidance and that nothing is written. Run a prior-art search to a saved report and open it with `show_report`; repeat where the tool is held and on a read-only connection. Start a run with `writable_ids` from a client that holds the earlier definition. Fetch a report asset whose sections start collapsed from a host that holds the earlier `fetch` definition. Comment on a Strategy and on a drawing, and read the threads back.
+- Endpoint and OAuth configuration are unchanged.
+
 ## Service 4.28.0
 
 Not yet verified against the deployed service. Record the discovery date, tool count and acceptance results here when the release is checked.
@@ -179,6 +195,8 @@ Before claiming authenticated portfolio workflow or host acceptance:
 | `validate_invention` | Removed; registration validates and saves in one request. |
 
 The renamed tools have no compatibility aliases. Update installed skills and saved references, and refresh client tool discovery when migrating to this interface. The status input is `task_id`, not a legacy ticket; one task represents the complete feedback run. Preparation returns `outcome: requested | already_requested` without a task ID.
+
+Service 4.29.0 later retired `list_innovations`, `get_innovation`, `register_innovation` and `update_innovation`; see that entry above for their replacements.
 
 ## Verification before release
 
