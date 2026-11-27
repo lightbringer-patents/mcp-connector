@@ -98,7 +98,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
 | `update_company_context` | write | Update selected profile fields or shared notes using the current revision; requires moderator rights and write consent. |
 | `search` | read | Find accessible innovations, documents, Strategies, meetings and vault files by name or folder path. |
-| `fetch` | read | Read accessible records or vault files, opt into complete asset state for Strategies, innovations, invention disclosures, drafts, reports, case relationships and PCT inventor additions, or read selected patent sections with pagination. |
+| `fetch` | read | Read accessible records or vault files, opt into complete asset state for Strategies, innovations, invention disclosures, drafts, reports, case relationships, PCT inventor additions and prosecution rounds, or read selected patent sections with pagination. |
 | `search_public_patents` | read | Find public patent publications by assignee, keywords or complete publication number. |
 | `show_invention_capture` | read | Present a saved innovation or its feedback through a supported component; retain a text fallback when unavailable. |
 | `show_patent_portfolio` | read | Present saved applications grouped into patent families, with recorded coverage and, for applications in prosecution, the current step and response deadline recorded in Lightbringer, through a supported component. |
@@ -120,7 +120,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `delete_strategy` | write | Permanently delete a selected Strategy when explicitly requested. |
 | `get_innovation_template` | read | Retrieve the structured registration template. |
 | `list_reviews` | read | Locate Strategy, report and patent-draft reviews where you are a participant or creator. |
-| `get_review` | read | Read review documents, comments, discussion and available validation-country choices. |
+| `get_review` | read | Read review documents, comments, discussion and available validation-country choices, and optionally name the asset under review. |
 | `set_validation_countries` | write | Replace the country selection on an open validation review; earlier approvals return to pending. |
 | `list_tasks` | read | Recover owned task IDs and recorded status in the connected organisation; optional innovation filter, agent conversations and pagination. |
 | `delete_task` | write | Delete an owned task and cached findings in any state, without cancelling execution. |
@@ -133,7 +133,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | `answer_agent` | write⁴ | Send answers to the open questions of an agent conversation. |
 | `ask_agent` | write⁴ | Send a follow-up to a completed agent conversation, or to one that needs attention. |
 | `cancel_task` | write⁴ | Stop a running agent conversation when the user asks. |
-| `comment` | write⁵ | Start a comment thread on a quoted passage of an invention disclosure, patent draft, Strategy or commentable report, or on a drawing, or reply to one of its threads. |
+| `comment` | write⁵ | Start a comment thread on a quoted passage of an invention disclosure, patent draft, Strategy, prosecution round or commentable report, or on a drawing, or reply to one of its threads. |
 | `update_comment_thread` | write⁵ | Resolve or reopen a comment thread on a record. |
 | `delete_comment` | write⁵ | Permanently delete a comment thread or one reply, subject to the web app's deletion rules. |
 | `respond_to_review` | write | Record an approve/request-changes response. |
@@ -164,7 +164,9 @@ The following tools carry `destructiveHint: true`: `update_asset`, `delete_asset
 
 `list_innovations`, `get_innovation`, `register_innovation` and `update_innovation` are retired. `search` with `category: "innovation"` lists innovations and the invention disclosures not yet submitted for drafting, and `category: "application"` lists submitted ones. `fetch` with `include_asset: true` reads a disclosure, and `create_asset` or `update_asset` with `type: invention_disclosure` saves or changes one. A client that still holds an older tool list and calls a retired tool receives guidance that names the replacement; that call reads and writes nothing. Tools that take an invention disclosure identifier accept `document:<id>`, as `search` returns it, or the bare ID; a client holding an earlier definition uses the bare ID.
 
-**Record comments need approval.** `comment` starts a thread on a quoted passage of an invention disclosure, patent draft, Strategy or commentable report, or replies to one of its threads. Where `illustration_id` is advertised, a drawing of an invention disclosure or of a PCT application's inventor additions takes one thread of its own, started with the drawing's ID in place of a quoted passage. Mentioned users with access are notified, and every request posts a new comment. `update_comment_thread` resolves or reopens a thread; `delete_comment` permanently deletes a thread or reply under the web app's rules, and a refused deletion changes nothing. Read existing threads with `include_discussions: true` on `fetch` with `include_asset: true`. Show outgoing comments for approval; after an uncertain result, check the threads before sending again.
+**Record comments need approval.** `comment` starts a thread on a quoted passage of an invention disclosure, patent draft, Strategy, prosecution round or commentable report, or replies to one of its threads. Where `illustration_id` is advertised, a drawing of an invention disclosure or of a PCT application's inventor additions takes one thread of its own, started with the drawing's ID in place of a quoted passage. Mentioned users with access are notified, and every request posts a new comment. `update_comment_thread` resolves or reopens a thread; `delete_comment` permanently deletes a thread or reply under the web app's rules, and a refused deletion changes nothing. Read existing threads with `include_discussions: true` on `fetch` with `include_asset: true`. Show outgoing comments for approval; after an uncertain result, check the threads before sending again.
+
+Where `get_review` advertises `include_asset_id`, a review of a report, Strategy, patent draft, application text or prosecution round returns `asset_id`. `fetch` with `include_asset: true` reads that asset, and `comment` takes the type and ID that `fetch` returns. Quote passages from the `fetch` text. These are the review's own threads. Filing sheet, overview and country reviews have no asset; they take discussion and a decision only.
 
 **PCT inventor additions are one asset.** Where advertised, `fetch` with `include_asset: true` reads `document:<id>#inventor_additions`: the changes the inventors ask for as one Markdown text, and the drawings beside it. `update_asset` with `type: inventor_additions` replaces the whole text at the fetched revision, changes drawing descriptions or removes a drawing; removal permanently deletes its image and needs explicit intent. An illustration upload with that asset ID as its destination adds a drawing. The service decides whether the additions can be edited. The text takes no comment threads; its drawings do.
 
