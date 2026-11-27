@@ -92,6 +92,7 @@ The table describes each tool's purpose. Its read/write labels follow `readOnlyH
 | Tool | Type | Purpose |
 |---|---|---|
 | `whoami` | read | Identify the connected user and organisation, with optional country, state and website. Where supported, `include_members` also retrieves a bounded roster of fellow members with read consent. |
+| `get_connection_profile` | read | Identify the user and organisation behind this connection with a stable profile ID, plus organisation name, user name and email when available. Hosts that support account profiles use it to label and recognise each connection; it takes no input and lists no other members. |
 | `get_credits` | read | Read whether automated work uses credits, the current balance, charging status and applicable patent search/import costs. |
 | `get_company_context` | read | Read the organisation's profile, shared notes, update permission and current revision. |
 | `get_company_context_template` | read | Retrieve the current company-context capture guide and update schema. |
